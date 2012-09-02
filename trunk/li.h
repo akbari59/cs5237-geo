@@ -1,12 +1,16 @@
 #ifndef LIH
 #define LIH
-
+#include<list>
+using namespace std;
 class LongInt {
 
 	protected:
 		void setZero_(); // set this number to be zero
 
 	public:
+		list<int> intList;
+		bool isPositive;
+
 		LongInt();
 		LongInt(LongInt&); // copy constructor
 		LongInt(int);      // take in an integer 
