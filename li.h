@@ -10,6 +10,7 @@ class LongInt {
 		LongInt();
 		LongInt(LongInt&); // copy constructor
 		LongInt(int);      // take in an integer 
+		LongInt(string);
 		void dump();       // print out this number
 
 		LongInt& operator=(int); 
