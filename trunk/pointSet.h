@@ -1,6 +1,6 @@
 #ifndef POINTSETH
 #define POINTSETH
-
+#include <vector>
 #include "li.h"
 
 class PointSet {
