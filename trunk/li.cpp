@@ -1,6 +1,5 @@
 #include "li.h"
-#include <list>
-using namespace std;
+
 
 void LongInt::setZero_(){
 	LongInt::intString.clear();
