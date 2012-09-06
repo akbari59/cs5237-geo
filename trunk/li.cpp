@@ -61,10 +61,10 @@ LongInt LongInt::operator*(LongInt& longInt){
 
 	string::iterator itr1, itr2;
 	int offset=0;
-	for(itr1=longInt.intString.begin();itr1!=longInt.intString.end();itr1++){
+	for(itr1=longInt.intString.end();itr1!=longInt.intString.begin();itr1++){
 		int b=*itr1-'0';
 		int count=0;
-		for(itr2=LongInt::intString.begin();itr2!=LongInt::intString.end();itr2++){
+		for(itr2=LongInt::intString.end();itr2!=LongInt::intString.begin();itr2++){
 			int a=*itr2 - '0';
 			result[offset+count]+=a*b;
 			count++;
@@ -78,7 +78,7 @@ LongInt LongInt::operator*(LongInt& longInt){
 		}
 		result[i] = result[i] + '0';
 	}
-	resultInt.intString = result;
+	resultInt.intString = strrev(result);
 	return resultInt;
 }
 
