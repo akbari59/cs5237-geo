@@ -85,3 +85,113 @@ LongInt LongInt::operator*(LongInt& longInt){
 bool LongInt::eqZero(){
 	return signValue==0;
 }
+
+
+//assignment operator
+LongInt& LongInt::operator=(int i) {
+	intString = '0';
+	if(i == 0) {
+		intString = '0';
+		return *this;
+	}
+	else {
+		if(i<0) {
+			signValue = -1;
+			i = i*-1;
+		}
+		else  if (i>0){
+			signValue = 1;
+		}
+		char* buffer;
+		_itoa(n,buffer,10);
+		LongInt::intString = buffer;
+		
+		return *this;
+	}
+}
+
+//assignment operator
+LongInt& LongInt::operator=(LongInt& i) {
+	
+	signValue = i.signValue;
+	intString= i.intString;
+	
+	return *this;
+}
+
+//> operator
+bool LongInt::operator>(LongInt& i) {
+	if(this->eqZero() && i.eqZero()) {
+		return false;
+	}
+	if(this->eqZero()) {
+		if (i.sign() == -1)
+			return true;
+		else return false;
+	}
+	if(i.eqZero()) {
+		if (this->sign() == 1)
+			return true;
+		else 
+			return false;
+	}
+	if(this->sign() != i.sign()) {
+		 if (this->sign() == 1)
+			 return true;
+		 else 
+			 return false;
+	}
+	else {
+		if(this->intString.size() != i.intString.size()) {
+			return this->intString.size()>i.intString.size();
+		}
+		
+		return false;
+	}
+}
+
+//< operator
+bool LongInt::operator<(LongInt& i) {
+	if(this->eqZero() && i.eqZero()) {
+		return false;
+	}
+	if(this->eqZero()) {
+		if (i.sign() == 1)
+			return true;
+		else 
+			return false;
+	}
+	if(i.eqZero()) {
+		return this->sign() == -1;
+	}
+	if(this->sign() != i.sign()) {
+		return this->sign() == -1;
+	}
+	else {
+		if(this->intString.size() != intString.num.size()) {
+			return this->intString.size()<intString.num.size();
+		}
+		
+		return false;
+	}
+}
+
+bool LongInt::operator==(LongInt& i) {
+	if(this->eqZero() && i.eqZero()) {
+		return true;
+	}
+	if(this->eqZero() || i.eqZero()) {
+		return false;
+	}
+	if(this->sign() != i.sign()) {
+		return false;
+	}
+	else {
+		if(this->intString.size() != i.intString.size()) {
+			return false;
+		}
+		
+		return true;
+	}
+}
+
