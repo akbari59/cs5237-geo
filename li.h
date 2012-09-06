@@ -8,8 +8,8 @@ class LongInt {
 		void setZero_(); // set this number to be zero
 
 	public:
-		list<int> intList;
-		bool isPositive;
+		string intString;
+		int signValue;
 
 		LongInt();
 		LongInt(LongInt&); // copy constructor
