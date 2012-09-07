@@ -46,7 +46,220 @@ LongInt::LongInt(int i) {
 
 }
 
+// '+' operator
+LongInt LongInt::operator+(LongInt& longInt){	
+	//longInt.intString -> parameter
+	//LongInt::intString -> current num
 
+	LongInt resultInt = *(new LongInt());
+	char* num1 = LongInt::intString;
+	char* num2 = longInt.intString;
+	char* answer = new char[40];
+	int len1 = strlen(num1) - 1, len2 = strlen(num2) - 1, carry = 0, result;
+	
+	if(LongInt.sign() == 1 && longInt.sign() == -1){
+		LongInt temp = *(new LongInt)
+		temp = longint;
+		temp.signValue = 1;
+		return (this - temp);
+	}
+	if(LongInt.sign() == -1 && longInt.sign() == 1){
+		LongInt temp = *(new LongInt)
+		temp = this;
+		temp.signValue = 1;
+		return (longInt - temp);
+	}
+
+	while(len1>=0 && len2>=0)
+	{
+		result = (int)(num1[len1] - '0') + (int)(num2[len2] - '0') + carry;
+		if(result > 9){
+			carry = result/10;
+			result = result%10;
+		}
+		else{
+			carry = 0;
+		}
+		//Constructing the answer string back
+		answer = strcat(answer,(char*)(result + '0'));
+
+		len1--;
+		len2--;
+	}
+	while(len1>=0)
+	{
+		result = (int)(num1[len1] - '0') + carry;
+		if(result > 9){
+			carry = result/10;
+			result = result%10;
+		}
+		else{
+			carry = 0;
+		}
+		answer = strcat(answer,(char*)(result + '0'));
+		len1--;
+	}
+
+	while(len2>=0)
+	{
+		result = (int)(num2[len2] - '0') + carry;
+		if(result > 9){
+			carry = result/10;
+			result = result%10;
+		}
+		else{
+			carry = 0;
+		}
+		answer = strcat(answer,(char*)(result + '0'));
+		len2--;
+	}
+
+	if(carry>0)
+		answer = strcat(answer,(char*)(carry + '0'));
+	
+	resultInt.intString = strrev(answer);
+
+	// add sign;
+	resultInt.signValue = longInt.sign();
+
+	return resultInt;
+}
+
+// '-' operator
+LongInt LongInt::operator-(LongInt& longInt){	
+	//longInt.intString -> parameter
+	//LongInt::intString -> current num
+
+	LongInt resultInt = *(new LongInt());
+	int borrow = 0,result;
+
+	char* num1 = LongInt::intString;
+	char* num2 = longInt.intString;
+
+	if(LongInt.sign() == 1 && longInt.sign() == -1){
+		LongInt temp = *(new LongInt)
+		temp = longint;
+		temp.signValue = 1;
+		return (this + temp);
+	}
+	if(LongInt.sign() == -1 && longInt.sign() == 1){
+		LongInt temp = *(new LongInt)
+		temp = longint;
+		temp.signValue = -1;
+		return (this + temp);
+	}
+	if(LongInt.sign() == -1 && longInt.sign() == -1){
+		LongInt temp = new LongInt(this);
+		temp.signValue = 1;
+		return (longInt - temp);
+	}	
+
+	int len1 = strlen(num1) - 1, len2 = strlen(num2) - 1;
+	char* answer = new char[40];
+	char* first,second;
+	int flen,slen,i;
+
+	// when control is here it is of the form a-b (where a and b are positive)
+	if(len1 > len2){
+		first = num1;
+		second = num2;
+		flen = len1;
+		slen = len2;
+		resultInt.signValue = 1;
+	}
+	else if(len1 < len2){
+		first = num2;
+		second = num1;
+		flen = len2;
+		slen = len1;
+		resultInt.signValue = -1;
+	}
+	else{
+		i = 0;
+		while(i < len1){
+			if(num1[i] > num2[i]){
+				first = num1;
+				second = num2;
+				flen = len1;
+				slen = len2;
+				resultInt.signValue = 1;
+				break;
+			}
+			else if (num2[i] > num1[i]){
+				first = num2;
+				second = num1;
+				flen = len2;
+				slen = len1;
+				resultInt.signValue = -1;
+				break;
+			}
+			else
+				i++;
+		}
+	}
+	int val;
+	while(flen>=0 && slen>=0)
+	{
+		//result = (int)(first[flen] - '0') - (int)(second[slen] - '0') + borrow;
+		if(first[flen] < second[slen]){
+			//borrowing from previous digit(s)
+			i = 1;
+			while((flen - i)>=0 && first[flen-i]=='0'){
+				i++;
+			}
+			val = first[flen-i] - '0';
+			while(i>=1){
+				first[flen-i] = (char)(val-1 + '0');
+				val = (int)(first[flen-i+1] - '0' + 10);
+				i--;
+			}
+			result = val - (int)(second[slen] - '0');
+		}
+		else{
+			result = (int)(first[flen] - '0') - (int)(second[slen] - '0');
+		}
+
+		//Constructing the answer string back
+		answer = strcat(answer,(char*)(result + '0'));
+
+		flen--;
+		slen--;
+	}
+	while(flen >= 0)
+	{
+		result = (int)(first[flen] - '0');
+		answer = strcat(answer,(char*)(result + '0'));
+		flen--;
+	}
+
+	while(slen >= 0)
+	{
+		result = (int)(second[slen] - '0');
+		answer = strcat(answer,(char*)(result + '0'));
+		slen--;
+	}
+	
+	resultInt.intString = strrev(answer);
+
+	return resultInt;
+}
+
+LongInt LongInt::operator*(LongInt& longInt){
+	LongInt resultInt = *(new LongInt());
+	if(LongInt::eqZero()||longInt.eqZero()){
+		LongInt::setZero_();
+		return resultInt;
+	} else if(longInt.sign()==sign()){
+		resultInt.signValue=1;
+	} else{
+		resultInt.signValue=1;
+	}
+	int resultSize=LongInt::intString.length()+longInt.intString.length();
+	char* result;
+	result=(char *)malloc(sizeof(int)*resultSize);
+	for(int i=0;i<resultSize;i++){
+		result[i]=0;
+	}
 
 //display number in standard out
 void LongInt::dump() {
@@ -445,6 +658,7 @@ bool LongInt::operator==(LongInt& i) {
 		
 		return true;
 	}
+}
 }
 
 bool LongInt::eqZero() {
