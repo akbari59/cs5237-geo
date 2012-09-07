@@ -1,20 +1,29 @@
 #ifndef LIH
 #define LIH
+
 #include<string>
 using namespace std;
 class LongInt {
 
-	protected:
-		void setZero_(); // set this number to be zero
+private:
+//public:
+//	bool	isZero;			//Show that the number is Zero or Not   //@@CAN BE REMOVED
+	int		intSignValue;	// Show the Sign of Number -1,0,+1
 
 	public:
 		string intString;
-		int signValue;
+		int size;
+		
+	protected:
+		void setZero_(); // set this number to be zero
 
+public:
+	void setSignValue(int sgn);
+
+	public:
 		LongInt();
 		LongInt(LongInt&); // copy constructor
 		LongInt(int);      // take in an integer 
-		LongInt(string);
 		void dump();       // print out this number
 
 		LongInt& operator=(int); 

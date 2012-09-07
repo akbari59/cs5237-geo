@@ -1,175 +1,427 @@
 #include "li.h"
 
+#include <iostream>
+#include <string>
 
-void LongInt::setZero_(){
-	LongInt::intString.clear();
+LongInt::LongInt() {
+	//isZero = true;
+	intSignValue = 0;
+	intString = "0";
+	size = 1;
+
 }
 
-LongInt::LongInt(){
-	intString = '0';
-	signValue=0;
 
+LongInt::LongInt(LongInt& i) {
+	//isZero = i.eqZero();
+	intSignValue = i.intSignValue;
+	intString = i.intString;
+	size = i.size;
+	
 }
-LongInt::LongInt(LongInt& longInt){
-	LongInt::intString = longInt.intString;
-	LongInt::signValue=longInt.sign();
-}
-LongInt::LongInt(int n){
-	if(n=0){
-		LongInt();
-	} else {
-		if(n=0){
-			signValue=1;
-		} else{
-			signValue=-1;
+
+
+LongInt::LongInt(int i) {
+	if(i == 0) {
+		intSignValue = 0;
+		intString = "0";
+	}
+	else {
+		if(i<0) {
+			intSignValue  = -1;
+			i = i*-1;
 		}
-		n=abs(n);
-		char* buffer;
-		_itoa(n,buffer,10);
-		LongInt::intString = buffer;
-	}
-}
-LongInt::LongInt(string sourceString){
-	if(sourceString.at(0)=='0'){
-		LongInt();
-	} else if(sourceString.at(0)=='-'){
-		intString = sourceString.substr(1, sourceString.length());
-		signValue=-1;
-	} else{
-		intString = sourceString;
-	}
-
-	LongInt::intString = intString;
-}
-
-LongInt LongInt::operator*(LongInt& longInt){
-	LongInt resultInt = *(new LongInt());
-	if(LongInt::eqZero()||longInt.eqZero()){
-		LongInt::setZero_();
-		return resultInt;
-	} else if(longInt.sign()==sign()){
-		resultInt.signValue=1;
-	} else{
-		resultInt.signValue=1;
-	}
-	int resultSize=LongInt::intString.length()+longInt.intString.length();
-	char* result;
-	result=(char *)malloc(sizeof(int)*resultSize);
-	for(int i=0;i<resultSize;i++){
-		result[i]=0;
-	}
-
-	string::iterator itr1, itr2;
-	int offset=0;
-	for(itr1=longInt.intString.end();itr1!=longInt.intString.begin();itr1++){
-		int b=*itr1-'0';
-		int count=0;
-		for(itr2=LongInt::intString.end();itr2!=LongInt::intString.begin();itr2++){
-			int a=*itr2 - '0';
-			result[offset+count]+=a*b;
-			count++;
+		else {
+			intSignValue  = 1;
 		}
-		offset++;
-	}
-	for(int i=0;i<resultSize;i++){
-		if(result[i]>9){
-			result[i+1]+=result[1]/10;
-			result[i]%=10;
-		}
-		result[i] = result[i] + '0';
-	}
-	resultInt.intString = strrev(result);
-	return resultInt;
+
+		char buffer[64];
+		_itoa(i,buffer,10);
+		
+		size = strlen(buffer);
+		intString = buffer;
+		
+		
 }
 
-bool LongInt::eqZero(){
-	return signValue==0;
+}
+
+
+
+//display number in standard out
+void LongInt::dump() {
+	if(intSignValue == 0) {
+		cout<<0<<endl;
+		return ;
+	}
+	if(intSignValue == -1) {
+		cout<<"-";
+	}
+	cout<<intString;
+	cout<<endl;
 }
 
 
 //assignment operator
 LongInt& LongInt::operator=(int i) {
-	intString = '0';
+	
 	if(i == 0) {
-		intString = '0';
+		intSignValue = 0;
+		intString = "0";
+		size = 1;
 		return *this;
 	}
 	else {
+		
 		if(i<0) {
-			signValue = -1;
+			intSignValue = -1;
 			i = i*-1;
 		}
-		else  if (i>0){
-			signValue = 1;
+		else {
+			intSignValue  = 1;
 		}
-		char* buffer;
-		_itoa(n,buffer,10);
-		LongInt::intString = buffer;
+
+		char buffer[64];
+		_itoa(i,buffer,10);
 		
-		return *this;
+		size = strlen(buffer);
+		intString = buffer;
+
+
 	}
+		
 }
 
 //assignment operator
 LongInt& LongInt::operator=(LongInt& i) {
-	
-	signValue = i.signValue;
-	intString= i.intString;
+
+	intSignValue = i.intSignValue;
+	size = i.size;
+	intString = i.intString;
 	
 	return *this;
 }
 
+/*
+//add operator
+LongInt LongInt::operator+(LongInt& i) {
+	LongInt ans;
+	//check zero
+	if(this->eqZero() && i.eqZero()) {
+		ans.setZero(true);
+		ans.setNeg(false);
+		return ans;
+	}
+	if(this->eqZero()) {
+		return LongInt(i);
+	}
+	if(i.eqZero()) {
+		return LongInt(*this);
+	}
+	//check same sign
+	if(this->sign() == i.sign()) {
+		ans.setZero(false);
+		ans.setNeg(i.sign()==-1);
+		int x = 0;
+		int y = 0;
+		int sizeX = this->num.size();
+		int sizeY = i.num.size();
+
+		//add set of 9 digits
+		while(x < sizeX && y < sizeY) {
+			
+			int sum = this->num[x]+i.num[y];
+			ans.num.push_back(sum);
+			x++;
+			y++;
+		}
+		if(x != sizeX) {
+			while(x<sizeX) {
+				ans.num.push_back(this->num[x]);
+				x++;
+			}
+		}
+		if(y != sizeY) {
+			while(y<sizeY) {
+				ans.num.push_back(i.num[y]);
+				y++;
+			}
+		}
+		//add carry
+		for(int k = 0;k<ans.num.size();k++) {
+			int carryCount = 0;
+			if(ans.num[k] > 1000000000) {
+				carryCount = ans.num[k]/1000000000;
+				ans.num[k] = ans.num[k] % 1000000000;
+	
+				if((k+1) != ans.num.size()) 
+					ans.num[k+1] += carryCount;
+				else
+					ans.num.push_back(carryCount);
+			}
+		}
+		return ans;
+
+	}
+	//check different sign combination
+	if(this->sign() == -1) {
+		LongInt temp(*this);
+		temp.setNeg(false);
+		ans = i - temp;
+		return ans;
+	}
+	else {
+		LongInt temp(i);
+		temp.setNeg(false);
+		ans = *this - temp;
+		return ans;
+	}
+}
+*/
+/*
+//minus operator
+LongInt LongInt::operator-(LongInt& i) {
+	LongInt ans;
+	//check zero
+	if(this->eqZero() && i.eqZero()) {
+		ans.setZero(true);
+		ans.setSignValue(0);
+		return ans;
+	}
+	if(this->eqZero()) {
+		ans = i;
+		ans.setNeg(i.sign()==-1 ? +1:-1);
+		return ans;
+	}
+	if(i.eqZero()) {
+		return LongInt(*this);
+	}
+	//check same sign		//@@@@@@@@@@@@@@@@@@@@@@
+	if(this->sign() == i.sign()) {
+		if(*this == i) {			//Same Sign and equal absolute value
+			return LongInt(0);
+		}
+		//answer is not zero
+		LongInt* large;
+		LongInt* small;
+		bool negate = false;
+		if(*this > i) {
+			large = this;
+			small = &i;
+		}
+		else {
+			large = &i;
+			small = this;
+			negate = true;
+		}
+		
+		int x = 0;
+		int y = 0;
+		int sizeX = large->num.size();
+		int sizeY = small->num.size();
+		
+		
+		//minus set of 9 digits
+		while(x < sizeX && y < sizeY) {
+			
+			int dif = large->num[x]-small->num[y];
+			ans.num.push_back(dif);
+			x++;
+			y++;
+		}
+		if(x != sizeX) {
+			while(x<sizeX) {
+				ans.num.push_back(large->num[x]);
+				x++;
+			}
+		}
+		//check negative number and remove by taking one unit from more significant int
+		for(int k = 0;k<ans.num.size();k++) {
+			if(ans.num[k]<0) {
+				if((k+1) != ans.num.size()) {
+					ans.num[k] = 1000000000-ans.num[k]*-1;
+					ans.num[k+1] = ans.num[k+1]-1;
+				}
+			}
+		}
+		int j = ans.num.size()-1;
+		//remove 0 at the start of Longint
+		while(j>=0) {
+			if(ans.num[j] == 0) {
+				ans.num.pop_back();
+				j--;
+			}
+			else break;
+		}
+		//set sign and zero
+		if(this->sign() == -1) {
+			if(negate) {
+				ans.setNeg(false);
+			}
+			else {
+				ans.setNeg(true);
+			}
+		}
+		else {
+			if(negate) {
+				ans.setNeg(true);
+			}
+			else {
+				ans.setNeg(false);
+			}
+		}
+		return ans;
+	}
+	//check different sign combination
+	if(this->sign() == -1) {
+		LongInt temp(*this);
+		temp.setNeg(false);
+		ans = temp + i;	
+		ans.setNeg(ans.sign() == -1 ? false : true);
+		return ans;
+	}
+	else {
+		LongInt temp(i);
+		temp.setNeg(false);
+		ans = *this + temp;;
+		return ans;
+	}
+}
+
+*/
+
+/*
+//multiplication operator
+LongInt LongInt::operator*(LongInt& i) {
+	//check zero
+	if(i.eqZero() || this->eqZero()) {
+		return LongInt(0);
+	}
+	LongInt ans(0);
+	ans.setZero(false);
+
+	for(int x = 0;x<i.num.size();x++) {
+		LongInt temp(0);
+		for(int k = 0;k<x;k++) {
+			temp.num.push_back(0);
+		}
+		for(int y = 0;y<this->num.size();y++) {
+			long long pro = (long long) i.num[x] * this->num[y];
+			if((temp.num.size())-x != y) {
+				pro = pro + temp.num[y+x];
+				temp.num.pop_back();
+			}
+			int countCarry = 0;
+			if(pro > 1000000000) {
+				countCarry = pro/1000000000;
+				pro = pro% 1000000000;
+			}
+			temp.num.push_back((int)pro);
+			if(countCarry >0) {
+				temp.num.push_back(countCarry);
+			}
+		}
+		int l = temp.num.size()-1;
+		while(l>=0) {
+			if(temp.num[l] == 0) {
+				temp.num.pop_back();
+				l--;
+			}
+			else break;
+		}
+		temp.setZero(temp.num.size()<0);
+		ans = ans+temp;
+	}
+	//set sign
+	if(i.sign() == this->sign()) {
+		ans.setNeg(false);
+	}
+	else {
+		ans.setNeg(true);
+	}
+	return ans;
+}
+
+*/
 //> operator
 bool LongInt::operator>(LongInt& i) {
 	if(this->eqZero() && i.eqZero()) {
 		return false;
 	}
+
 	if(this->eqZero()) {
-		if (i.sign() == -1)
-			return true;
-		else return false;
+		return i.intSignValue == -1;
 	}
+
 	if(i.eqZero()) {
-		if (this->sign() == 1)
-			return true;
-		else 
-			return false;
+		return this->intSignValue == 1;
 	}
-	if(this->sign() != i.sign()) {
-		 if (this->sign() == 1)
-			 return true;
-		 else 
-			 return false;
+
+	if(this->intSignValue != i.intSignValue) {
+		return this->intSignValue == 1;
 	}
+
 	else {
-		if(this->intString.size() != i.intString.size()) {
-			return this->intString.size()>i.intString.size();
+
+		
+		if(this->size != i.size) {		// Two Numbers has same Sign and One has more digits
+				
+				return ((this->intSignValue == 1)? this->size > i.size : !(this->size > i.size));
 		}
+		else{						// Two Numbers has same Sign and Same number of digits
+			int numdigits = max((this->size), (i.size));
+			for (int inx = 0; inx< numdigits; inx++)
+			{
+				if (this->intString[inx] > i.intString[inx])
+					return (this->intSignValue == 1)?  true: false;
+				else if (this->intString[inx] < i.intString[inx])
+					return (this->intSignValue == 1)?  false: true;
+			}
+		}
+
 		
 		return false;
+		}
 	}
-}
+
+
+
+
+
 
 //< operator
 bool LongInt::operator<(LongInt& i) {
 	if(this->eqZero() && i.eqZero()) {
 		return false;
 	}
+
 	if(this->eqZero()) {
-		if (i.sign() == 1)
-			return true;
-		else 
-			return false;
+		return i.intSignValue == 1;
 	}
+
 	if(i.eqZero()) {
-		return this->sign() == -1;
+		return this->intSignValue == -1;
 	}
-	if(this->sign() != i.sign()) {
-		return this->sign() == -1;
+
+	if(this->intSignValue != i.intSignValue) {
+		return this->intSignValue == -1;
 	}
+
 	else {
-		if(this->intString.size() != intString.num.size()) {
-			return this->intString.size()<intString.num.size();
+		if(this-> size != i.size) {	// Two Numbers has same Sign and One has more digits
+			return ((this->intSignValue == -1)? this->size > i.size : !(this->size > i.size));
+		}
+		else
+		{
+			int numdigits = max((this->size), (i.size));
+			for (int inx = 0; inx< numdigits; inx++)
+			{
+				if (this->intString[inx] > i.intString[inx])
+					return (this->intSignValue == -1)?  true: false;
+				else if (this->intString[inx] < i.intString[inx])
+					return (this->intSignValue == -1)?  false: true;
+			}
+
 		}
 		
 		return false;
@@ -183,11 +435,11 @@ bool LongInt::operator==(LongInt& i) {
 	if(this->eqZero() || i.eqZero()) {
 		return false;
 	}
-	if(this->sign() != i.sign()) {
+	if(this->intSignValue != i.intSignValue) {
 		return false;
 	}
 	else {
-		if(this->intString.size() != i.intString.size()) {
+		if(this-> intSignValue != i.intSignValue) {
 			return false;
 		}
 		
@@ -195,3 +447,25 @@ bool LongInt::operator==(LongInt& i) {
 	}
 }
 
+bool LongInt::eqZero() {
+	return intSignValue == 0;
+}
+
+int LongInt::sign() {
+	return intSignValue;
+}
+
+/*
+double LongInt::doubleValue() {
+	double ans = 0;
+	double multi = 1000000000;
+	for(int i = 0;i<num.size();i++) {
+		double place = 1;
+		for(int j = 0;j<i;j++) {
+			place = place * multi;
+		}
+		ans = ans + (double)num[i] * place;
+	}
+	return ans;
+}
+*/
