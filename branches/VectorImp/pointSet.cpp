@@ -72,7 +72,8 @@ int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	array<LongInt, 2> v0={p2[0]-p1[0],p2[1]-p1[1]};
 	array<LongInt, 2> v1={p3[0]-p1[0],p3[1]-p1[1]};
 	array<LongInt, 2> v ={p[0]-p1[0],p[1]-p1[1]};
-
+	if(v0[0]*v1[1]==v0[1]*v1[0])
+		return 0;
 	array<LongInt, 2> v1T={-v1[1], v1[0]};
 	//centric=[v0(v0-v1)*v1T+v1]/(2*v1T*v0)
 	LongInt denom=inner_product(v1T.begin(), v1T.end(), v0.begin(), l0); //coefficient 2 is ommitted here.
