@@ -41,18 +41,24 @@ LongInt::LongInt(string sourceString){
 	unsigned start=0;
 	if(sourceString.at(0)=='0'){
 		signValue=0;
+		return;
 	} else if(sourceString.at(0)=='-'){
 		
 		signValue=-1;
+		sourceString=sourceString.substr(1, sourceString.length());
 		start=1;
 	} else{
 		
 		signValue=1;
 	}
-	for(unsigned i=start; i<sourceString.length(); i+=baselength){
-		absolute.push_back( atoi(sourceString.substr(i, i+baselength).c_str()));
-	}
 	
+	
+	while(sourceString.length()>=baselength){
+		absolute.push_back( atoi(sourceString.substr(sourceString.length()-baselength, baselength).c_str()));
+		sourceString=sourceString.substr(0, sourceString.length()-baselength);
+	}
+	if(!sourceString.empty())
+		absolute.push_back( atoi(sourceString.c_str()));
 }
 
 LongInt LongInt::operator*(LongInt& n){
@@ -272,7 +278,7 @@ LongInt LongInt::operator+(LongInt& n){
 			int result=absolute[i]+n.absolute[i]+carry;
 			if(result>maxbase){
 				carry=1;
-				result=result-100;
+				result=result-base;
 			}else{
 				carry=0;
 			}
