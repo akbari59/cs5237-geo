@@ -50,6 +50,6 @@ class LongInt {
 
 LongInt operator-(LongInt&); // negative sign
 void vappend(vector<int>& source, vector<int>& target, int start, int carry, int basemax);
-
+ostream& operator<< (ostream& out, LongInt i );
 
 #endif

@@ -40,7 +40,7 @@ void LongInt::convert(int n){
 LongInt::LongInt(string sourceString){
 	unsigned start=0;
 	if(sourceString.at(0)=='0'){
-		LongInt();
+		signValue=0;
 	} else if(sourceString.at(0)=='-'){
 		
 		signValue=-1;
@@ -50,7 +50,7 @@ LongInt::LongInt(string sourceString){
 		signValue=1;
 	}
 	for(unsigned i=start; i<sourceString.length(); i+=baselength){
-		absolute.push_back( atoi(sourceString.substr(1, i+baselength).c_str()));
+		absolute.push_back( atoi(sourceString.substr(i, i+baselength).c_str()));
 	}
 	
 }
@@ -423,5 +423,21 @@ double LongInt::doubleValue(){
 LongInt operator-(LongInt& n){
 	LongInt out=n;
 	out.signValue=-out.signValue;
+	return out;
+}
+
+ostream& operator<< (ostream& out, LongInt n ){
+	if(n.sign()==0)
+		out<<0;
+	else{
+		if(n.sign()==-1)
+			out<<'-';
+		out<<n.absolute.back();
+	    for(int i=n.size()-2;i>=0;i--)
+	   
+	      out<<std::setw(LongInt::baselength)<<setfill('0')<<n.absolute[i];
+	   
+        
+	}
 	return out;
 }
