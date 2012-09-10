@@ -25,26 +25,28 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	LongInt dot1v=inner_product(v1.begin(), v1.end(), v.begin(), l0);
 
 	LongInt denom=dot00 * dot11 - dot01 * dot01;
+	if(denom.sign()==0)
+		return 0;
 	LongInt u = dot11 * dot0v - dot01 * dot1v;
 	LongInt w = dot00 * dot1v - dot01 * dot0v;
 
 	int denomsign=denom.sign();
 	int usign=u.sign();
 	int wsign=w.sign();
-
+	
 	if(denomsign==usign&&denomsign==wsign){
 		LongInt sum=u+w;
 		if(denom<sum)
 		   return -1;
 		if(denom==sum)
-			return 0;
+			return 1;
 		if(denom>sum)
 			return 1;
 	}
 	if(usign==0){
 		if(denomsign==wsign)
 			if(denom>w)
-				return 0;
+				return 1;
 			else
 				return -1;
 		else
@@ -53,7 +55,7 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	if(wsign==0){
 		if(denomsign==usign)
 			if(denom>u)
-				return 0;
+				return 1;
 			else
 				return -1;
 		else
@@ -70,7 +72,8 @@ int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	array<LongInt, 2> v0={p2[0]-p1[0],p2[1]-p1[1]};
 	array<LongInt, 2> v1={p3[0]-p1[0],p3[1]-p1[1]};
 	array<LongInt, 2> v ={p[0]-p1[0],p[1]-p1[1]};
-
+	if(v0[0]*v1[1]==v0[1]*v1[0])
+		return 0;
 	array<LongInt, 2> v1T={-v1[1], v1[0]};
 	//centric=[v0(v0-v1)*v1T+v1]/(2*v1T*v0)
 	LongInt denom=inner_product(v1T.begin(), v1T.end(), v0.begin(), l0); //coefficient 2 is ommitted here.
@@ -87,6 +90,6 @@ int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	else if(dif2<r2)
 		return 1;
 	else
-		return 0;
+		return 1;
 }
 

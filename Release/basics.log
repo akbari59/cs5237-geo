@@ -1,0 +1,9 @@
+﻿Build started 2012/9/10 13:48:37.
+     1>Project "D:\ProjectVS2012\basics\basics.vcxproj" on node 2 (Clean target(s)).
+     1>_PrepareForClean:
+         Deleting file ".\Release\basics.lastbuildstate".
+     1>Done Building Project "D:\ProjectVS2012\basics\basics.vcxproj" (Clean target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.01
