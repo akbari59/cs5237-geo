@@ -1,0 +1,30 @@
+﻿Build started 9/10/2012 9:14:49 PM.
+     1>Project "C:\Users\j\Downloads\ProjectVS2012\ProjectVS2012\basics\basics.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _VC80_UPGRADE=0x0600 /D _MBCS /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug/" /Fd".\Debug/vc110.pdb" /Gd /TP /analyze- /errorReport:prompt li.cpp lmath.cpp pointSet.cpp StdAfx.cpp stopWatch.cpp
+         stopWatch.cpp
+         StdAfx.cpp
+         pointSet.cpp
+         lmath.cpp
+         li.cpp
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(125): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(133): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(183): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(190): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(191): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(196): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(216): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\j\downloads\projectvs2012\projectvs2012\basics\li.cpp(424): warning C4018: '<' : signed/unsigned mismatch
+         Generating Code...
+       Lib:
+         D:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:".\Debug\basics.lib" /NOLOGO .\Debug/li.obj
+         .\Debug/lmath.obj
+         .\Debug/pointSet.obj
+         .\Debug/StdAfx.obj
+         .\Debug/stopWatch.obj
+         basics.vcxproj -> C:\Users\j\Downloads\ProjectVS2012\ProjectVS2012\basics\.\Debug\basics.lib
+     1>Done Building Project "C:\Users\j\Downloads\ProjectVS2012\ProjectVS2012\basics\basics.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.09
