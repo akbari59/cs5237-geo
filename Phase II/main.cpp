@@ -97,7 +97,7 @@ void readFile(){
 	string command;// the command of each line
 	string numberStr; // for single LongInt operation
 	string outputAns = "Answer of your computation"; // the answer you computed
-
+	int delay=-1;
 	ifstream inputFile("input.txt",ios::in);
 
 
@@ -121,24 +121,43 @@ void readFile(){
 
 		if(!command.compare("AP")){
 			linestream >> numberStr;
+			LongInt x(numberStr);
 			linestream >> numberStr;
-		
+		    LongInt y(numberStr);
+			psa.addPoint(x,y);
+			
 		}
 		else if(!command.compare("OT")){
 			linestream >> numberStr;
-			linestream >> numberStr;			
+			int p1=atoi(numberStr.c_str);
 			linestream >> numberStr;
-			
+			int p2=atoi(numberStr.c_str);
+			linestream >> numberStr;
+			int p3=atoi(numberStr.c_str);
+			if(delay>0)
+				Sleep(delay*1000);
+			trist.makeTri(p1,p2,p3);
+			drawTrist();
 		} 
 		else if(!command.compare("IP")){
 			linestream >> numberStr;
+			LongInt x(numberStr);
 			linestream >> numberStr;
+			LongInt y(numberStr);
+			int pIndex=psa.addPoint(x,y);
 			//remember to remove the triangle from the trist;
-			
+			if(delay>0)
+				Sleep(delay*1000);
+			for(int i=0; i<trist.triangle.size();i++){
+				TriRecord triangle=trist.triangle[i];
+				//To-Do
+				
+			}
+
 		}
 		else if(!command.compare("DY")){
 			linestream >> numberStr;
-
+			delay=atoi(numberStr.c_str);
 		}
 		else{
 			cerr << "Exception: Wrong input command" << endl;
