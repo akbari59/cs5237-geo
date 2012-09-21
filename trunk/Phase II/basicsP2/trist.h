@@ -56,12 +56,10 @@ class Trist {
 		std::vector<TriRecord*> triangles;
 		int en_[6];
 		Direction direction[6];
-		PointSetArray *pointSetArray;
-
 
 	public:
 		
-		Trist(PointSetArray*);
+		Trist();
 		int noTri(); // return the number of triangles
 		int makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false); // Add a triangle into the Trist with the three point indices
 		// Moreover, automatically establish the fnext pointers to its neigbhours if autoMerge = true
