@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include "pointSetArray.h"
 /*
 
   For a triangle abc, if version 0 is abc
@@ -34,24 +35,33 @@ class TriRecord {
 	protected:
 		int vi_[3];
 		OrTri fnext_[6];
-
 	friend Trist;
 };
 
+class Direction {
+	public:
+		int org;
+		int dest;
+		Direction(int org, int dest){
+			Direction::org=org;
+			Direction::dest=dest;
+		}
+};
 
 
 
 class Trist {
 
 	protected:
-
+		std::vector<TriRecord*> triangles;
 		int en_[6];
-		
-		
+		Direction direction[6];
+		PointSetArray *pointSetArray;
+
 
 	public:
-		std::vector<TriRecord> triangle;
-		Trist();
+		
+		Trist(PointSetArray*);
 		int noTri(); // return the number of triangles
 		int makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false); // Add a triangle into the Trist with the three point indices
 		// Moreover, automatically establish the fnext pointers to its neigbhours if autoMerge = true
