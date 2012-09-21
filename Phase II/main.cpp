@@ -148,9 +148,18 @@ void readFile(){
 			//remember to remove the triangle from the trist;
 			if(delay>0)
 				Sleep(delay*1000);
-			for(int i=0; i<trist.triangle.size();i++){
-				TriRecord triangle=trist.triangle[i];
-				//To-Do
+			for(int i=0; i<trist.noTri();i++){
+				int p1, p2, p3;
+				OrTri orindex= i<<3;
+				trist.getVertexIdx(orindex, p1, p2, p3);
+				int intri_result=psa.inTri(p1, p2, p3, pIndex);
+				if(intri_result==1){
+					trist.delTri(orindex);
+					trist.makeTri(pIndex,p2,p3);
+					trist.makeTri(p1,pIndex,p3);
+					trist.makeTri(p1,p2,pIndex);
+					break;
+				}
 				
 			}
 
