@@ -6,26 +6,26 @@ class LongInt {
 
 	protected:
 		void setZero_(); // set this number to be zero
-        int abscompare(vector<int>& a, vector<int>& b); //1: a>b; 0: a==b; -1: a<b
-		void absDiff(vector<int>& larger, vector<int>& small, vector<int>& target);
+        int abscompare(vector<_int64>& a, vector<_int64>& b); //1: a>b; 0: a==b; -1: a<b
+		void absDiff(vector<_int64>& larger, vector<_int64>& small, vector<_int64>& target);
 		void absMult(LongInt& a,  LongInt& b,  LongInt& result);
-		void absMult(int a, LongInt& b, LongInt& result);
+		void absMult(_int64 a, LongInt& b, LongInt& result);
 		
 	public:
-		vector<int> absolute;
+		vector<_int64> absolute;
 		int signValue;
-		static int const base=10000;
-		static int const baselength=4;
+		static _int64 const base=1000000000;
+		static int const baselength=9;
 		
 		void LongInt::shiftSum(LongInt& z2,LongInt& z1, LongInt& z0, unsigned b1, unsigned b0, LongInt& result);//result=z1*Base^b1+z2*Base^b0+z0
 		void LongInt::shiftSum(LongInt& z1, LongInt& z0, unsigned b, LongInt& result); //result=z1*Base^b+z0
 		LongInt();
-		int size(){return absolute.size();};
+		unsigned size(){return absolute.size();};
 		LongInt(int);      // take in an integer 
 		LongInt(string);
 		void dump();       // print out this number
 		void LongInt::convert(int i);
-		void LongInt::separate(int length1, LongInt& l1, LongInt& l2);
+		void LongInt::separate(unsigned length1, LongInt& l1, LongInt& l2);
 		LongInt& operator=(int); 
 		LongInt& operator=(LongInt&);  
 		LongInt operator+(LongInt&); 
@@ -49,7 +49,7 @@ class LongInt {
 };
 
 LongInt operator-(LongInt&); // negative sign
-void vappend(vector<int>& source, vector<int>& target, int start, int carry, int basemax);
+void vappend(vector<_int64>& source, vector<_int64>& target, unsigned start, _int64 carry, _int64 basemax);
 ostream& operator<< (ostream& out, LongInt i );
 
 #endif
