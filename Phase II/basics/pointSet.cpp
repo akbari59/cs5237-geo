@@ -1,4 +1,5 @@
 #include <numeric>
+#include <iostream>
 #include "pointSet.h"
 using namespace std;
 
@@ -17,18 +18,38 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	array<LongInt, 2> v0={p2[0]-p1[0],p2[1]-p1[1]};
 	array<LongInt, 2> v1={p3[0]-p1[0],p3[1]-p1[1]};
 	array<LongInt, 2> v={p[0]-p1[0],p[1]-p1[1]};
-		
+	/*cout<<"v1[0]:"<<endl<<v1[0]<<endl;
+	cout<<"v1[1]:"<<endl<<v1[1]<<endl;
+	cout<<"v[0]:"<<endl<<v[0]<<endl;
+	cout<<"v[1]:"<<endl<<v[1]<<endl;*/
+	LongInt a,b;
+	a=v0[0]*v1[1];
+	b=v0[1]*v1[0];
+	if(v0[0]*v1[1]==v0[1]*v1[0])
+		return 0;
 	LongInt dot00=inner_product(v0.begin(), v0.end(), v0.begin(), l0);
 	LongInt dot01=inner_product(v0.begin(), v0.end(), v1.begin(), l0);
 	LongInt dot0v=inner_product(v0.begin(), v0.end(), v.begin(), l0);
 	LongInt dot11=inner_product(v1.begin(), v1.end(), v1.begin(), l0);
 	LongInt dot1v=inner_product(v1.begin(), v1.end(), v.begin(), l0);
-
+	
+	/*cout<<"dot00:"<<endl<<dot00<<endl;
+	cout<<"dot01:"<<endl<<dot01<<endl;
+	cout<<"dot0v:"<<endl<<dot0v<<endl;
+	cout<<"dot11:"<<endl<<dot11<<endl;
+	cout<<"dot1v:"<<endl<<dot1v<<endl;*/
+	
 	LongInt denom=dot00 * dot11 - dot01 * dot01;
+
+	//cout<<"denom:"<<endl<<denom<<endl;
+
 	if(denom.sign()==0)
 		return 0;
 	LongInt u = dot11 * dot0v - dot01 * dot1v;
 	LongInt w = dot00 * dot1v - dot01 * dot0v;
+
+	//cout<<u<<endl;
+	//cout<<w<<endl;
 
 	int denomsign=denom.sign();
 	int usign=u.sign();
@@ -91,5 +112,6 @@ int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 		return 1;
 	else
 		return 0;
+	
 }
 
