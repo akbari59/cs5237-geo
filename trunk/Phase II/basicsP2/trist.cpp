@@ -29,28 +29,45 @@ int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false){
 	(*record).vi_[2] = pIndex3;
 	if(autoMerge){
 	}
+	int index = triangles.size;
 	triangles.push_back(record);
+	return index;
+}
+
+void Trist::delTri(OrTri ef){
+	int index = ef >> 3;
+	triangles.assign(index, NULL);
 }
 
 OrTri Trist::enext(OrTri ef){
 	int version = ef && (0000111b);
 	int index = ef >> 3;
-	return (index<<3) | Trist::en_[version];
+	if(triangles.at(index)==NULL){
+		return NULL;
+	} else{
+		return (index<<3) | Trist::en_[version];
+	}
 }
 
 OrTri Trist::sym(OrTri ef){
 	int version = ef && (0000111b);
 	int index = ef >> 3;
-	if(version<3){
-		return (index<<3) | version+3;
+	if(triangles.at(index)==NULL){
+		return NULL;
 	} else{
-		return (index<<3) | version-3;
+		if(version<3){
+			return (index<<3) | version+3;
+		} else{
+			return (index<<3) | version-3;
+		}
 	}
 }
 
 void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
 	int index = ef >> 3;
 	TriRecord *record = Trist::triangles.at(index);
+	if(record == NULL)
+		return;
 	pIdx1=(*record).vi_[1];
 	pIdx2=(*record).vi_[2];
 	pIdx3=(*record).vi_[3];

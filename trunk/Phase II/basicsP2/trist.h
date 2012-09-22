@@ -60,9 +60,10 @@ class Trist {
 	public:
 		
 		Trist();
-		int noTri(); // return the number of triangles
+		int noTri(); // return the number of triangles.Here is the num of normal triangles. e.g abc and bca are considered as one triangle. 
 		int makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false); // Add a triangle into the Trist with the three point indices
 		// Moreover, automatically establish the fnext pointers to its neigbhours if autoMerge = true
+		//Return the index of the normal triangle.
 
 		void delTri(OrTri); // Delete a triangle, but you can assume that this is ONLY used by the IP operation
 		                    // You may want to make sure all its neighbours are detached (below)
