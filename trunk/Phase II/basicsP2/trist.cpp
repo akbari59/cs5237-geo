@@ -10,12 +10,12 @@ Trist::Trist()
 	en_[4] = 3;
 	en_[5] = 4;
 
-	direction[0] = *new Direction(0,1);
-	direction[1] = *new Direction(1,2);
-	direction[2] = *new Direction(2,0);
-	direction[3] = *new Direction(1,0);
-	direction[4] = *new Direction(2,1);
-	direction[5] = *new Direction(0,2);
+	v_[0] = 012;
+	v_[1] = 120;
+	v_[2] = 201;
+	v_[3] = 102;
+	v_[4] = 210;
+	v_[5] = 021;
 }
 
 int Trist::noTri(){
@@ -23,10 +23,10 @@ int Trist::noTri(){
 }
 
 int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false){
-	TriRecord *record = new TriRecord();
-	(*record).vi_[0] = pIndex1;
-	(*record).vi_[1] = pIndex2;
-	(*record).vi_[2] = pIndex3;
+	TriRecord record;
+	record.vi_[0] = pIndex1;
+	record.vi_[1] = pIndex2;
+	record.vi_[2] = pIndex3;
 	if(autoMerge){
 	}
 	int index = triangles.size;
@@ -36,24 +36,24 @@ int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false){
 
 void Trist::delTri(OrTri ef){
 	int index = ef >> 3;
-	triangles.assign(index, NULL);
+	triangles.at(index).isEmpty = true;
 }
 
 OrTri Trist::enext(OrTri ef){
-	int version = ef && (0000111b);
+	int version = ef && 7;
 	int index = ef >> 3;
-	if(triangles.at(index)==NULL){
-		return NULL;
+	if(triangles.at(index).isEmpty){
+		return -1;
 	} else{
 		return (index<<3) | Trist::en_[version];
 	}
 }
 
 OrTri Trist::sym(OrTri ef){
-	int version = ef && (0000111b);
+	int version = ef && 7;
 	int index = ef >> 3;
-	if(triangles.at(index)==NULL){
-		return NULL;
+	if(triangles.at(index).isEmpty){
+		return -1;
 	} else{
 		if(version<3){
 			return (index<<3) | version+3;
@@ -65,26 +65,39 @@ OrTri Trist::sym(OrTri ef){
 
 void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
 	int index = ef >> 3;
-	TriRecord *record = Trist::triangles.at(index);
-	if(record == NULL)
-		return;
-	pIdx1=(*record).vi_[1];
-	pIdx2=(*record).vi_[2];
-	pIdx3=(*record).vi_[3];
+	int version = ef && 7;
+	TriRecord record = Trist::triangles.at(index);
+	if(record.isEmpty){
+		pIdx1=-1;
+		pIdx2=-1;
+		pIdx3=-1;
+	} else {
+		pIdx1=record.vi_[v_[version]/100];
+		pIdx2=record.vi_[v_[version]%100/10];
+		pIdx3=record.vi_[v_[version]%10];
+	}
 }
 
 int Trist::org(OrTri ef){
-	int version = ef && (0000111b);
+	int version = ef && 7;
 	int index = ef >> 3;
-	TriRecord *record = Trist::triangles.at(index);
-	return (*record).vi_[direction[version].org];
+	TriRecord record = Trist::triangles.at(index);
+	if(!record.isEmpty){
+		return record.vi_[v_[version]/100];
+	} else {
+		return -1;
+	}
 }
 
 int Trist::dest(OrTri ef){
-	int version = ef && (0000111b);
+	int version = ef && 7;
 	int index = ef >> 3;
-	TriRecord *record = Trist::triangles.at(index);
-	return (*record).vi_[direction[version].dest];
+	TriRecord record = Trist::triangles.at(index);
+	if(!record.isEmpty){
+		return record.vi_[v_[version]%10];
+	} else {
+		return -1;
+	}
 }
 
 
