@@ -35,35 +35,22 @@ class TriRecord {
 	protected:
 		int vi_[3];
 		OrTri fnext_[6];
+		bool isEmpty;
 	friend Trist;
 };
-
-class Direction {
-	public:
-		int org;
-		int dest;
-		Direction(int org, int dest){
-			Direction::org=org;
-			Direction::dest=dest;
-		}
-};
-
-
 
 class Trist {
 
 	protected:
-		std::vector<TriRecord*> triangles;
+		std::vector<TriRecord> triangles;
 		int en_[6];
-		Direction direction[6];
-
+		int v_[6];
 	public:
 		
 		Trist();
-		int noTri(); // return the number of triangles.Here is the num of normal triangles. e.g abc and bca are considered as one triangle. 
+		int noTri(); // return the number of triangles
 		int makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false); // Add a triangle into the Trist with the three point indices
 		// Moreover, automatically establish the fnext pointers to its neigbhours if autoMerge = true
-		//Return the index of the normal triangle.
 
 		void delTri(OrTri); // Delete a triangle, but you can assume that this is ONLY used by the IP operation
 		                    // You may want to make sure all its neighbours are detached (below)
