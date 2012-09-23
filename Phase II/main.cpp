@@ -167,10 +167,11 @@ void readFile(){
 			int p2=atoi(numberStr.c_str());
 			linestream >> numberStr;
 			int p3=atoi(numberStr.c_str());
-			/*if(delay>0)
-				Sleep(delay*1000);*/
+			
 			trist.makeTri(p1,p2,p3);
-			//drawTrist();
+			display();
+			if(delay>0)
+				Sleep(delay*1000);
 		} 
 		else if(!command.compare("IP")){
 			linestream >> numberStr;
@@ -192,11 +193,15 @@ void readFile(){
 					trist.makeTri(pIndex,p2,p3);
 					trist.makeTri(p1,pIndex,p3);
 					trist.makeTri(p1,p2,pIndex);
+					display();
+			        if(delay>0)
+				       Sleep(delay*1000);
 					break;
 				 }
 				}
 				
 			}
+			
 
 		}
 		else if(!command.compare("DY")){
