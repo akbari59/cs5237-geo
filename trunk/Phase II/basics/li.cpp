@@ -444,12 +444,16 @@ int LongInt::sign(){
 
 
 double LongInt::doubleValue(){
-	_int64 sum=0;
+	if(signValue==0){
+		return 0;
+	}else{
+	double sum=0;
 
-	for(unsigned i=0, coef=1; i<absolute.size(); (i++, coef*=base)){
-		sum=sum+coef*absolute[i];
+	  for(unsigned i=0, coef=1; i<absolute.size(); (i++, coef*=base)){
+		 sum+=coef*absolute[i];
+	  }
+	  return signValue*sum;
 	}
-	return 0;
 }
 LongInt operator-(LongInt& n){
 	LongInt out=n;

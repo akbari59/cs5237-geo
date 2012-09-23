@@ -2,7 +2,6 @@
 #define TRISTH
 
 #include <vector>
-#include <array>
 #include "pointSetArray.h"
 /*
 

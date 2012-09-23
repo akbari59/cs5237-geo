@@ -1,11 +1,10 @@
 
-
+#define WIN32
 
 #include "math.h"
 #include <iostream>
 #include <fstream>
-#include "GL\glut.h"
-#include <windows.h>
+
 #include <cstdio>
 #include <fstream>
 #include <strstream>
@@ -14,6 +13,7 @@
 
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
+#include "GL\glut.h"
 using namespace std;
 
 
@@ -52,7 +52,42 @@ void drawATriangle(double x1,double y1, double x2, double y2, double x3, double 
 
 }
 
+void drawTrist(){
+	//contain all drawing code.
+	//get data from global variables trist & psa
+	/**/
+	for(int i= 1; i<=psa.noPt(); i++)
+	{
+		LongInt x,y;
+		psa.getPoint(i,x,y);
+		double tx = x.doubleValue();
+		double ty = y.doubleValue();
+		drawAPoint(tx,ty);
+		cout<<"point at->"<<tx<<"," <<ty<<endl;
+	}
+	for(int i= 0; i<trist.noTri(); i++)
+	{
+		int pi1,pi2, pi3;
+		trist.getVertexIdx(i * 8,pi1,pi2,pi3);
+		LongInt x1,y1,x2,y2,x3,y3;
+		psa.getPoint(pi1,x1,y1);
+		psa.getPoint(pi2,x2,y2);
+		psa.getPoint(pi3,x3,y3);
 
+		drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+
+		////////////////////////////////////////////
+		drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue());
+		drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+		drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue());
+
+		
+		cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
+	}
+
+	
+	
+}
 
 void display(void)
 {
@@ -61,9 +96,7 @@ void display(void)
 
 
 	// draw your output here (erase the following 3 lines)
-	drawAPoint(100,100);
-	drawALine(200,200,300,300);
-	drawATriangle(400,400,400,500,500,500);
+	drawTrist();
 
 	glPopMatrix();
 	glutSwapBuffers ();
@@ -129,15 +162,15 @@ void readFile(){
 		}
 		else if(!command.compare("OT")){
 			linestream >> numberStr;
-			int p1=atoi(numberStr.c_str);
+			int p1=atoi(numberStr.c_str());
 			linestream >> numberStr;
-			int p2=atoi(numberStr.c_str);
+			int p2=atoi(numberStr.c_str());
 			linestream >> numberStr;
-			int p3=atoi(numberStr.c_str);
-			if(delay>0)
-				Sleep(delay*1000);
+			int p3=atoi(numberStr.c_str());
+			/*if(delay>0)
+				Sleep(delay*1000);*/
 			trist.makeTri(p1,p2,p3);
-			drawTrist();
+			//drawTrist();
 		} 
 		else if(!command.compare("IP")){
 			linestream >> numberStr;
@@ -146,19 +179,21 @@ void readFile(){
 			LongInt y(numberStr);
 			int pIndex=psa.addPoint(x,y);
 			//remember to remove the triangle from the trist;
-			if(delay>0)
-				Sleep(delay*1000);
+			/*if(delay>0)
+				Sleep(delay*1000);*/
 			for(int i=0; i<trist.noTri();i++){
 				int p1, p2, p3;
 				OrTri orindex= i<<3;
 				trist.getVertexIdx(orindex, p1, p2, p3);
-				int intri_result=psa.inTri(p1, p2, p3, pIndex);
-				if(intri_result==1){
+				if(p1!=-1){
+				 int intri_result=psa.inTri(p1, p2, p3, pIndex);
+				 if(intri_result==1){
 					trist.delTri(orindex);
 					trist.makeTri(pIndex,p2,p3);
 					trist.makeTri(p1,pIndex,p3);
 					trist.makeTri(p1,p2,pIndex);
 					break;
+				 }
 				}
 				
 			}
@@ -166,7 +201,7 @@ void readFile(){
 		}
 		else if(!command.compare("DY")){
 			linestream >> numberStr;
-			delay=atoi(numberStr.c_str);
+			delay=atoi(numberStr.c_str());
 		}
 		else{
 			cerr << "Exception: Wrong input command" << endl;
@@ -175,10 +210,7 @@ void readFile(){
 
 }
 
-void drawTrist(){
-	//contain all drawing code.
-	//get data from global variables trist & psa
-}
+
 
 
 void writeFile()
@@ -231,7 +263,23 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 	};
 	if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 	{
-
+		int pIndex=psa.addPoint(x,y);
+	    for(int i=0; i<trist.noTri();i++){
+				int p1, p2, p3;
+				OrTri orindex= i<<3;
+				trist.getVertexIdx(orindex, p1, p2, p3);
+				if(p1!=-1){
+				 int intri_result=psa.inTri(p1, p2, p3, pIndex);
+				 if(intri_result==1){
+					trist.delTri(orindex);
+					trist.makeTri(pIndex,p2,p3);
+					trist.makeTri(p1,pIndex,p3);
+					trist.makeTri(p1,p2,pIndex);
+					break;
+				 }
+				}
+				
+			}
 	}
 
 	glutPostRedisplay();
