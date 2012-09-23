@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LIH
 #define LIH
 #include<vector>
