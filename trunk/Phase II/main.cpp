@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 
+
 #include <cstdio>
 #include <fstream>
 #include <strstream>
@@ -13,8 +14,32 @@
 
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
-#include "GL\glut.h"
+#include "glut.h"
+#include <Windows.h>
+
 using namespace std;
+
+// Initial size of graphics window on your screen.
+const int WIDTH  = 600; // in pixels
+const int HEIGHT = 600; //
+
+// Current size of window (will change when you resize window)
+int width  = WIDTH;
+int height = HEIGHT;
+
+// Bounds of viewing frustum, maintain uniform scaling.
+double viewWindowLeft =  -300;
+double viewWindowRight  = 300;
+double viewWindowBottom =  -300;
+double viewWindowTop  = 300;
+
+// increment for  zoom
+const double ZoomSTEP = 5;
+const double zoomFactor = 1.03;
+
+const double PanSTEP = 5;
+
+
 
 
 // These three functions are for those who are not familiar with OpenGL, you can change these or even completely ignore them
@@ -89,8 +114,25 @@ void drawTrist(){
 	
 }
 
+void setView()
+{
+
+	glViewport (0, 0, (GLsizei) width, (GLsizei) height);
+	glMatrixMode (GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D( viewWindowLeft, viewWindowRight, viewWindowBottom, viewWindowTop);  
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+
+}
+
+
 void display(void)
 {
+
+	setView();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
 
@@ -102,17 +144,99 @@ void display(void)
 	glutSwapBuffers ();
 }
 
+
 void reshape (int w, int h)
 {
-
-	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
-	glMatrixMode (GL_PROJECTION);
+	width = w;
+	height = h;
+	glViewport (0, 0, (GLsizei) width, (GLsizei) height);
+	
+	/*glMatrixMode (GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0,w,h,0);  
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	*/
 
+}
 
+void pan(unsigned char direction)
+{
+   // for zoom in reduces viewWindow size and for zoom out increases it.
+
+	if (direction == 's') {	//move left
+			viewWindowLeft -= PanSTEP; viewWindowRight -= PanSTEP;
+						
+		}
+		else if (direction == 'd') {
+			viewWindowLeft += PanSTEP; viewWindowRight += PanSTEP;
+						
+		}
+		else if (direction == 'x') {
+			viewWindowBottom -= PanSTEP; viewWindowTop -= ZoomSTEP;
+			
+		}
+		else if (direction == 'e') {
+			viewWindowBottom += PanSTEP; viewWindowTop += PanSTEP;
+			
+		}
+
+}
+
+void zoom(unsigned char direction)
+{
+   // for zoom in reduces viewWindow size and for zoom out increases it.
+
+	if (direction == '+') {
+			viewWindowLeft += ZoomSTEP; viewWindowRight -= ZoomSTEP;
+			viewWindowBottom += ZoomSTEP; viewWindowTop -= ZoomSTEP;
+			
+		}
+		else if (direction == '-') {
+			viewWindowLeft -= ZoomSTEP; viewWindowRight += ZoomSTEP;
+			viewWindowBottom -= ZoomSTEP; viewWindowTop += ZoomSTEP;
+			
+		}
+
+}
+
+/*
+void zoom (double rate)
+{
+
+	
+	width = width * rate;
+	height = height * rate;
+
+	 reshape (width , height );
+
+	
+
+}
+*/
+
+void GetOGLPos(int x, int y, int& wx, int& wy, int& wz)
+{
+    GLint viewport[4];
+    GLdouble modelview[16];
+    GLdouble projection[16];
+    GLfloat winX, winY, winZ;
+    GLdouble posX, posY, posZ;
+ 
+    glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+    glGetDoublev( GL_PROJECTION_MATRIX, projection );
+    glGetIntegerv( GL_VIEWPORT, viewport );
+ 
+    winX = (float)x;
+    winY = (float)viewport[3] - (float)y;
+    glReadPixels( x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+ 
+    gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+ 
+	wx = posX;
+	wy = posY;
+	wz = posZ;
+    return;
 }
 
 void init(void)
@@ -131,13 +255,15 @@ void readFile(){
 	string numberStr; // for single LongInt operation
 	string outputAns = "Answer of your computation"; // the answer you computed
 	int delay=-1;
-	ifstream inputFile("input.txt",ios::in);
+	ifstream inputFile("input2.txt",ios::in);
 
 
 	if(inputFile.fail()){
 		cerr << "Error: Cannot read input file \"" << "input.txt" << "\"";
 		return;
 	}
+
+	
 
 	while(inputFile.good()){
 
@@ -167,11 +293,10 @@ void readFile(){
 			int p2=atoi(numberStr.c_str());
 			linestream >> numberStr;
 			int p3=atoi(numberStr.c_str());
-			
+			/*if(delay>0)
+				d(delay*1000);*/
 			trist.makeTri(p1,p2,p3);
-			display();
-			if(delay>0)
-				Sleep(delay*1000);
+			//drawTrist();
 		} 
 		else if(!command.compare("IP")){
 			linestream >> numberStr;
@@ -193,24 +318,24 @@ void readFile(){
 					trist.makeTri(pIndex,p2,p3);
 					trist.makeTri(p1,pIndex,p3);
 					trist.makeTri(p1,p2,pIndex);
-					display();
-			        if(delay>0)
-				       Sleep(delay*1000);
 					break;
 				 }
 				}
 				
 			}
-			
 
 		}
 		else if(!command.compare("DY")){
 			linestream >> numberStr;
 			delay=atoi(numberStr.c_str());
+			if(delay>0)
+				Sleep(delay * 1000);
 		}
 		else{
 			cerr << "Exception: Wrong input command" << endl;
 		}
+
+		display();
 	}
 
 }
@@ -244,6 +369,52 @@ void keyboard (unsigned char key, int x, int y)
 			exit(0);
 		break;
 
+		case 'O':
+		case 'o':
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			//zoom(2);
+			zoom('-');
+			glutPostRedisplay();
+			break;
+
+		case 'I':
+		case 'i':
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			zoom('+');
+			//zoom(0.5);
+			glutPostRedisplay();
+			break;
+
+		case 'S':
+		case 's':
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			pan('s');
+			//zoom(0.5);
+			glutPostRedisplay();
+			break;
+		case 'D':
+		case 'd':
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			pan('d');
+			//zoom(0.5);
+			glutPostRedisplay();
+			break;
+		case 'E':
+		case 'e':
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			pan('e');
+			//zoom(0.5);
+			glutPostRedisplay();
+			break;
+		case 'X':
+		case 'x':
+			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+			pan('x');
+			//zoom(0.5);
+			glutPostRedisplay();
+			break;
+
+
 		default:
 		break;
 	}
@@ -268,7 +439,10 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 	};
 	if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 	{
-		int pIndex=psa.addPoint(x,y);
+		int wx, wy, wz;
+		GetOGLPos(x,y, wx, wy, wz);
+		int pIndex=psa.addPoint(wx,wy);
+
 	    for(int i=0; i<trist.noTri();i++){
 				int p1, p2, p3;
 				OrTri orindex= i<<3;
@@ -292,6 +466,7 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 
 int main(int argc, char **argv)
 {
+	width = 1000; height = 800;
 	cout<<"CS5237 Phase II"<< endl<< endl;
 	cout << "Right mouse click: OT operation"<<endl;
 	cout << "Q: Quit" <<endl;
@@ -299,7 +474,7 @@ int main(int argc, char **argv)
 	cout << "W: Write control points to \"input.txt\"" <<endl;
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize (1000, 700);
+	glutInitWindowSize (width, height);
 	glutInitWindowPosition (50, 50);
 	glutCreateWindow ("CS5237 Phase II");
 	init ();
