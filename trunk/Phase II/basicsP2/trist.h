@@ -53,6 +53,8 @@ class Trist {
 
 		void delTri(OrTri); // Delete a triangle, but you can assume that this is ONLY used by the IP operation
 		                    // You may want to make sure all its neighbours are detached (below)
+
+		void eraseAll();
 		
 		OrTri enext(OrTri ef);
 		OrTri sym(OrTri ef);
