@@ -40,6 +40,10 @@ void Trist::delTri(OrTri ef){
 	//triangles.at(index).isEmpty = true;
 }
 
+void Trist::eraseAll(){
+	triangles.clear();
+}
+
 OrTri Trist::enext(OrTri ef){
 	int version = ef && 7;
 	int index = ef >> 3;
