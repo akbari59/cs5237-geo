@@ -44,6 +44,9 @@ class Trist {
 		std::vector<TriRecord> triangles;
 		int en_[6];
 		int v_[6];
+
+		void checkShare(TriRecord record1, TriRecord record2, int sharePoints[]);
+		int getVersion(int direction);
 	public:
 		
 		Trist();
