@@ -44,9 +44,6 @@ class Trist {
 		std::vector<TriRecord> triangles;
 		int en_[6];
 		int v_[6];
-
-		void checkShare(TriRecord record1, TriRecord record2, int sharePoints[]);
-		int getVersion(int direction);
 	public:
 		
 		Trist();
@@ -56,8 +53,6 @@ class Trist {
 
 		void delTri(OrTri); // Delete a triangle, but you can assume that this is ONLY used by the IP operation
 		                    // You may want to make sure all its neighbours are detached (below)
-
-		void eraseAll();
 		
 		OrTri enext(OrTri ef);
 		OrTri sym(OrTri ef);
