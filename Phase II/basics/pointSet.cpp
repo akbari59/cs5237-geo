@@ -15,6 +15,13 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	array<LongInt, 2> p2=set[p2Idx-1];
 	array<LongInt, 2> p3=set[p3Idx-1];
 	array<LongInt, 2> p=set[pIdx-1];
+
+	if (((p[0] == p1[0]) && (p[1] == p1[1])) ||
+		 ((p[0] == p2[0]) && (p[1] == p2[1])) ||
+		  ((p[0] == p3[0]) && (p[1] == p3[1])) )
+		  return 0;
+		
+
 	array<LongInt, 2> v0={p2[0]-p1[0],p2[1]-p1[1]};
 	array<LongInt, 2> v1={p3[0]-p1[0],p3[1]-p1[1]};
 	array<LongInt, 2> v={p[0]-p1[0],p[1]-p1[1]};

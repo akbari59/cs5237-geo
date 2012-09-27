@@ -18,3 +18,14 @@ int PointSetArray::noPt(){
 void PointSetArray::eraseAllPoints(){
 	set.clear();
 }
+
+int PointSetArray::removePoint (int pIndex)
+{
+	if(pIndex<=set.size()){
+		set.erase(set.begin() + pIndex -1);
+		return 1;
+	}
+
+	return -1;
+
+}

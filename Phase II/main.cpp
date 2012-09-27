@@ -20,8 +20,8 @@
 using namespace std;
 
 // Initial size of graphics window on your screen.
-const int WIDTH  = 600; // in pixels
-const int HEIGHT = 600; //
+const int WIDTH  = 1000; // in pixels
+const int HEIGHT = 700; //
 
 // Current size of window (will change when you resize window)
 int width  = WIDTH;
@@ -43,17 +43,23 @@ const double PanSTEP = 5;
 
 
 // These three functions are for those who are not familiar with OpenGL, you can change these or even completely ignore them
-	Trist trist;
-	PointSetArray psa;
-void drawAPoint(double x,double y)
+Trist trist;
+PointSetArray psa;
+PointSetArray notinsidepsa;
+
+void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 0, float opaque = 0)
 {
-		glPointSize(5);
-		glBegin(GL_POINTS);
-		glColor3f(0,0,0);
-			glVertex2d(x,y);
-		glEnd();
-		glPointSize(1);
+	
+	glPointSize(5);
+	glBegin(GL_POINTS);
+	//glColor3f(0,0,0);
+	glColor4f(red,green,blue, opaque);
+	glVertex2d(x,y);
+	glEnd();
+	glPointSize(1);
 }
+
+
 
 void drawALine(double x1,double y1, double x2, double y2)
 {
@@ -81,15 +87,8 @@ void drawTrist(){
 	//contain all drawing code.
 	//get data from global variables trist & psa
 	/**/
-	for(int i= 1; i<=psa.noPt(); i++)
-	{
-		LongInt x,y;
-		psa.getPoint(i,x,y);
-		double tx = x.doubleValue();
-		double ty = y.doubleValue();
-		drawAPoint(tx,ty);
-		cout<<"point at->"<<tx<<"," <<ty<<endl;
-	}
+
+
 	for(int i= 0; i<trist.noTri(); i++)
 	{
 		int pi1,pi2, pi3;
@@ -108,6 +107,26 @@ void drawTrist(){
 
 		
 		cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
+	}
+
+	for(int i= 1; i<=psa.noPt(); i++)
+	{
+		LongInt x,y;
+		psa.getPoint(i,x,y);
+		double tx = x.doubleValue();
+		double ty = y.doubleValue();
+		drawAPoint(tx,ty, 0, 0, 0, 0.6);
+		cout<<"point at->"<<tx<<"," <<ty<<endl;
+	}
+
+	for(int i= 1; i<=notinsidepsa.noPt(); i++)
+	{
+		LongInt x,y;
+		notinsidepsa.getPoint(i,x,y);
+		double tx = x.doubleValue();
+		double ty = y.doubleValue();
+		drawAPoint(tx,ty, 0.6, 0, 0, 0.7);
+		cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
 	
@@ -255,7 +274,7 @@ void readFile(){
 	string numberStr; // for single LongInt operation
 	string outputAns = "Answer of your computation"; // the answer you computed
 	int delay=-1;
-	ifstream inputFile("input2.txt",ios::in);
+	ifstream inputFile("input.txt",ios::in);
 
 
 	if(inputFile.fail()){
@@ -442,24 +461,44 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 		int wx, wy, wz;
 		GetOGLPos(x,y, wx, wy, wz);
 		int pIndex=psa.addPoint(wx,wy);
+		int intri_result = -1;
+		bool outsidePoint = true;
 
-	    for(int i=0; i<trist.noTri();i++){
+	    for(int i=0; i<trist.noTri() && (intri_result == -1 );i++){
 				int p1, p2, p3;
 				OrTri orindex= i<<3;
 				trist.getVertexIdx(orindex, p1, p2, p3);
 				if(p1!=-1){
-				 int intri_result=psa.inTri(p1, p2, p3, pIndex);
-				 if(intri_result==1){
-					trist.delTri(orindex);
-					trist.makeTri(pIndex,p2,p3);
-					trist.makeTri(p1,pIndex,p3);
-					trist.makeTri(p1,p2,pIndex);
-					break;
-				 }
-				}
+				 intri_result=psa.inTri(p1, p2, p3, pIndex);
+				 switch (intri_result)
+				 {
+				 case 1:
+
+					 trist.delTri(orindex);
+					 trist.makeTri(pIndex,p2,p3);
+					 trist.makeTri(p1,pIndex,p3);
+					 trist.makeTri(p1,p2,pIndex);
+					 outsidePoint = false;
+					 break;
+				 case 0:
+					 cout << "degenerate case" << endl;
+					 psa.removePoint(pIndex);
+					 outsidePoint = false;
+					 int pIndex2=notinsidepsa.addPoint(wx,wy);
+					 break;
+				 
+				 }//switch
+				} //if
 				
-			}
-	}
+			} // for
+		if(outsidePoint == true)
+		{
+			cout << "you have clicked outside any triangle. point was discarded." << endl;
+			psa.removePoint(pIndex);
+			int pIndex2=notinsidepsa.addPoint(wx,wy);
+			
+		}
+	} //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 
 	glutPostRedisplay();
 }
