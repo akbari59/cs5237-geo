@@ -11,11 +11,11 @@
 #include <strstream>
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
-#include "glut.h"
-#include <Windows.h>
+#include "GL\glut.h"
 
 using namespace std;
 
@@ -315,6 +315,10 @@ void readFile(){
 			/*if(delay>0)
 				d(delay*1000);*/
 			trist.makeTri(p1,p2,p3);
+			if(delay>0){
+				Sleep(delay*1000);
+				display();
+			}
 			//drawTrist();
 		} 
 		else if(!command.compare("IP")){
@@ -337,6 +341,10 @@ void readFile(){
 					trist.makeTri(pIndex,p2,p3);
 					trist.makeTri(p1,pIndex,p3);
 					trist.makeTri(p1,p2,pIndex);
+					if(delay>0){
+				       Sleep(delay*1000);
+				       display();
+			        }
 					break;
 				 }
 				}
@@ -365,7 +373,32 @@ void readFile(){
 void writeFile()
 {
 	//write to  ¡°input.txt¡± get data from global variables trist & psa
+	double instCount = 0; // Instruction count
+	ofstream outputFile("input.txt",ios::out); // output file
 
+	outputFile<<instCount<<": DY 2"<<endl;
+	instCount++;
+
+	// obtain individual point data from psa and writing the AP command
+	for(int i= 1; i<=psa.noPt(); i++)
+	{
+		LongInt x,y;
+		psa.getPoint(i,x,y);
+		double dx = x.doubleValue();
+		double dy = y.doubleValue();
+		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": AP " << dx << " " << dy << endl;
+		instCount++;
+	}
+
+	// obtain vertices of each triangle and write the OT command
+	for(int i= 0; i<trist.noTri(); i++)
+	{
+		int pi1,pi2, pi3;
+		trist.getVertexIdx(i * 8,pi1,pi2,pi3);
+		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": OT " << pi1 << " " << pi2 << " " << pi3 << endl;
+		instCount++;
+	}
+	outputFile.close();
 }
 
 
