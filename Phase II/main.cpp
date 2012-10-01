@@ -15,7 +15,8 @@
 
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
-#include "GL\glut.h"
+#include "glut.h"
+#include <Windows.h>
 
 using namespace std;
 
@@ -28,18 +29,18 @@ int width  = WIDTH;
 int height = HEIGHT;
 
 // Bounds of viewing frustum, maintain uniform scaling.
-double viewWindowLeft =  -300;
-double viewWindowRight  = 300;
-double viewWindowBottom =  -300;
-double viewWindowTop  = 300;
+double viewWindowLeft =  -500;
+double viewWindowRight  = 500;
+double viewWindowBottom =  -350;
+double viewWindowTop  = 350;
 
 // increment for  zoom
-const double ZoomSTEP = 5;
+const double ZoomSTEP = 100;
 const double zoomFactor = 1.03;
 
-const double PanSTEP = 5;
+const double PanSTEP = 10;
 
-
+bool file_loaded = false;
 
 
 // These three functions are for those who are not familiar with OpenGL, you can change these or even completely ignore them
@@ -65,7 +66,8 @@ void drawALine(double x1,double y1, double x2, double y2)
 {
 		glPointSize(1);
 		glBegin(GL_LINE_LOOP);
-		glColor3f(0,0,1);
+		//glColor3f(0,0,1);
+		glColor4f(0,0,1, 0.80);
 			glVertex2d(x1,y1);
 			glVertex2d(x2,y2);
 		glEnd();
@@ -105,8 +107,8 @@ void drawTrist(){
 		drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 		drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue());
 
-		
-		cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
+		//just for debugging purpose
+		//cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
 	}
 
 	for(int i= 1; i<=psa.noPt(); i++)
@@ -116,7 +118,9 @@ void drawTrist(){
 		double tx = x.doubleValue();
 		double ty = y.doubleValue();
 		drawAPoint(tx,ty, 0, 0, 0, 0.6);
-		cout<<"point at->"<<tx<<"," <<ty<<endl;
+		
+		//just for debugging purpose
+		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
 	for(int i= 1; i<=notinsidepsa.noPt(); i++)
@@ -126,7 +130,9 @@ void drawTrist(){
 		double tx = x.doubleValue();
 		double ty = y.doubleValue();
 		drawAPoint(tx,ty, 0.6, 0, 0, 0.7);
-		cout<<"point at->"<<tx<<"," <<ty<<endl;
+
+		//just for debugging purpose
+		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
 	
@@ -206,7 +212,10 @@ void zoom(unsigned char direction)
 {
    // for zoom in reduces viewWindow size and for zoom out increases it.
 
+	
+
 	if (direction == '+') {
+		//if(viewWindowRight- viewWindowLeft <  3* ZoomSTEP) 	return;
 			viewWindowLeft += ZoomSTEP; viewWindowRight -= ZoomSTEP;
 			viewWindowBottom += ZoomSTEP; viewWindowTop -= ZoomSTEP;
 			
@@ -216,6 +225,15 @@ void zoom(unsigned char direction)
 			viewWindowBottom -= ZoomSTEP; viewWindowTop += ZoomSTEP;
 			
 		}
+
+}
+
+void resetView()
+{
+	viewWindowLeft =  -500;
+	viewWindowRight  = 500;
+	viewWindowBottom =  -350;
+	viewWindowTop  = 350;
 
 }
 
@@ -282,6 +300,13 @@ void readFile(){
 		return;
 	}
 
+	if(file_loaded)
+	{
+		//remove all points and triangles;
+		psa.eraseAllPoints();
+		trist.delAllTri();
+	}
+
 	
 
 	while(inputFile.good()){
@@ -312,8 +337,6 @@ void readFile(){
 			int p2=atoi(numberStr.c_str());
 			linestream >> numberStr;
 			int p3=atoi(numberStr.c_str());
-			/*if(delay>0)
-				d(delay*1000);*/
 			trist.makeTri(p1,p2,p3);
 			if(delay>0){
 				Sleep(delay*1000);
@@ -328,8 +351,6 @@ void readFile(){
 			LongInt y(numberStr);
 			int pIndex=psa.addPoint(x,y);
 			//remember to remove the triangle from the trist;
-			/*if(delay>0)
-				Sleep(delay*1000);*/
 			for(int i=0; i<trist.noTri();i++){
 				int p1, p2, p3;
 				OrTri orindex= i<<3;
@@ -409,6 +430,7 @@ void keyboard (unsigned char key, int x, int y)
 		case 'r':
 		case 'R':
 			readFile();
+			file_loaded = true;
 		break;
 
 		case 'w':
@@ -423,47 +445,39 @@ void keyboard (unsigned char key, int x, int y)
 
 		case 'O':
 		case 'o':
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-			//zoom(2);
 			zoom('-');
-			glutPostRedisplay();
+			//glutPostRedisplay();
 			break;
 
 		case 'I':
 		case 'i':
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 			zoom('+');
-			//zoom(0.5);
-			glutPostRedisplay();
+			//glutPostRedisplay();
 			break;
 
 		case 'S':
 		case 's':
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 			pan('s');
-			//zoom(0.5);
-			glutPostRedisplay();
+			//glutPostRedisplay();
 			break;
 		case 'D':
 		case 'd':
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 			pan('d');
-			//zoom(0.5);
-			glutPostRedisplay();
+			//glutPostRedisplay();
 			break;
 		case 'E':
 		case 'e':
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 			pan('e');
-			//zoom(0.5);
-			glutPostRedisplay();
+			//glutPostRedisplay();
 			break;
 		case 'X':
 		case 'x':
-			//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 			pan('x');
-			//zoom(0.5);
-			glutPostRedisplay();
+			//glutPostRedisplay();
+			break;
+		case 'N':
+		case 'n':
+			resetView();
 			break;
 
 
@@ -526,7 +540,7 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 			} // for
 		if(outsidePoint == true)
 		{
-			cout << "you have clicked outside any triangle. point was discarded." << endl;
+			//cout << "you have clicked outside any triangle. point was discarded." << endl;
 			psa.removePoint(pIndex);
 			int pIndex2=notinsidepsa.addPoint(wx,wy);
 			
@@ -544,6 +558,9 @@ int main(int argc, char **argv)
 	cout << "Q: Quit" <<endl;
 	cout << "R: Read in control points from \"input.txt\"" <<endl;
 	cout << "W: Write control points to \"input.txt\"" <<endl;
+	cout << "Zoom Functions: I: Zoom in, O: Zoom Out" <<endl;
+	cout << "E,S,D,X: Scroll Up, Left, Right, Down, Respectively." <<endl;
+	cout << "N: Reset the view to the original position if you lost the direction." <<endl;
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize (width, height);
