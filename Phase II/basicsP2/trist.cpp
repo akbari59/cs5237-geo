@@ -50,25 +50,21 @@ void Trist::delAllTri()
 OrTri Trist::enext(OrTri ef){
 	int version = ef && 7;
 	int index = ef >> 3;
-	if(triangles.at(index).isEmpty){
-		return -1;
-	} else{
+	
 		return (index<<3) | Trist::en_[version];
-	}
+	
 }
 
 OrTri Trist::sym(OrTri ef){
 	int version = ef && 7;
 	int index = ef >> 3;
-	if(triangles.at(index).isEmpty){
-		return -1;
-	} else{
+	
 		if(version<3){
 			return (index<<3) | version+3;
 		} else{
 			return (index<<3) | version-3;
 		}
-	}
+	
 }
 
 void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
@@ -90,22 +86,18 @@ int Trist::org(OrTri ef){
 	int version = ef && 7;
 	int index = ef >> 3;
 	TriRecord record = Trist::triangles.at(index);
-	if(!record.isEmpty){
+	
 		return record.vi_[v_[version]/100];
-	} else {
-		return -1;
-	}
+	
 }
 
 int Trist::dest(OrTri ef){
 	int version = ef && 7;
 	int index = ef >> 3;
 	TriRecord record = Trist::triangles.at(index);
-	if(!record.isEmpty){
+	
 		return record.vi_[v_[version]%10];
-	} else {
-		return -1;
-	}
+	
 }
 
 

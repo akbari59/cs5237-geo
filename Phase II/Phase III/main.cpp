@@ -13,8 +13,8 @@
 #include <sstream>
 #include <iomanip>
 
-#include "basicsP2\pointSetArray.h"
-#include "basicsP2\trist.h"
+#include "pointSetArray.h"
+#include "trist.h"
 #include "GL\glut.h"
 #include <Windows.h>
 
@@ -577,3 +577,5 @@ int main(int argc, char **argv)
 
 	return 0;
 }
+
+
