@@ -61,7 +61,7 @@ OrTri Trist::enext(OrTri ef){
 OrTri Trist::fnext(OrTri ef){
 	int version = ef & 7;
 	int index = ef >> 3;	
-	return triangles[index].fnext_[ef]; 	
+	return triangles[index].fnext_[version]; 	
 }
 
 
@@ -104,9 +104,9 @@ int Trist::org(OrTri ef){
 int Trist::dest(OrTri ef){
 	int version = ef & 7;
 	int index = ef >> 3;
-	TriRecord record = Trist::triangles.at(index);
+	TriRecord record = triangles[index];
 	
-	return record.vi_[v_[version]%10];
+	return record.vi_[(v_[version]/10)%10];
 	
 }
 
@@ -123,35 +123,38 @@ void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& 
 	//set neigbours
 	//links to neigbours tri
 	OrTri neighbour=fnext(tri);
-	fmerge(tri1, neighbour);
-	fmerge(sym(tri1), sym(neighbour));
+	
+	checkSymmerge(tri1, neighbour);
 	tri=enext(tri);
 	neighbour=fnext(tri);
-	fmerge(tri2, neighbour);
-	fmerge(sym(tri2), sym(neighbour));
+	checkSymmerge(tri2, neighbour);
 	tri=enext(tri);
 	neighbour=fnext(tri);
-	fmerge(tri3, neighbour);
-	fmerge(sym(tri3), sym(neighbour));
+	checkSymmerge(tri3, neighbour);
 	
 	//merge among tri1, tri2 & tri3
-	fmerge(enext(tri1), enext(sym(tri2)));
-	fmerge(sym(enext(tri1)), enext(enext(tri2)));
-
-	fmerge(enext(tri2), enext(sym(tri3)));
-	fmerge(sym(enext(tri2)), enext(enext(tri3)));
-
-	fmerge(enext(tri3), enext(sym(tri1)));
-	fmerge(sym(enext(tri3)), enext(enext(tri1)));
+	symMerge(enext(tri1), enext(sym(tri2)));
+	symMerge(enext(tri2), enext(sym(tri3)));
+	symMerge(enext(tri3), enext(sym(tri1)));
 
 	//add childs
-	TriRecord record=triangles[index];
+	TriRecord& record=triangles[index];
 	record.addChilds(tri1);
 	record.addChilds(tri2);
 	record.addChilds(tri3);
 
 }//auto merge 3 new triangles to their neigbours. insert new triangle to the childs.
-
+void Trist::checkSymmerge(OrTri abc, OrTri abd){
+	if(abc!=-1&&abd!=-1)
+	  symMerge(abc, abd);
+	
+}
+void Trist::symMerge(OrTri abc, OrTri abd){
+	
+	  fmerge(abc, abd);
+	  fmerge(sym(abc), sym(abd));
+	
+}
 void Trist::fmerge(OrTri abc, OrTri abd){
 	int index1=abc>>3;
 	int version1= abc & 7;
@@ -170,38 +173,41 @@ void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto me
 	new_tri1=makeTri(p3, p2, p4)<<3;	
 	new_tri2=makeTri(p3, p1, p4)<<3;
 
-	//glue the new 2 triangles with neighbours of old triangles 
-	fmerge(new_tri1, fnext(sym(enext(old_tri1))));
-	fmerge(sym(new_tri1), fnext(enext(old_tri1)));
-
-	fmerge(new_tri2, fnext(enext(enext(old_tri1))));
-	fmerge(sym(new_tri2), fnext(enext(sym(old_tri1))));
+	//glue the new 2 triangles with neighbours of old triangles
+	OrTri neighbour=fnext(sym(enext(old_tri1)));
+	checkSymmerge(new_tri1, neighbour);
+	
+	neighbour=fnext(enext(enext(old_tri1)));
+	checkSymmerge(new_tri2, neighbour);
+	
 
 	new_tri1=enext(new_tri1);
 	new_tri2=enext(new_tri2);
 
-	fmerge(new_tri1, fnext(enext(old_tri2)));
-	fmerge(sym(new_tri1), fnext(sym(enext(old_tri2))));
+	neighbour=fnext(enext(old_tri2));
+	checkSymmerge(new_tri1, neighbour);
+	
 
-	fmerge(new_tri2, fnext(enext(sym(old_tri2))));
-	fmerge(sym(new_tri2), fnext(enext(enext(old_tri2))));
+	neighbour=fnext(enext(sym(old_tri2)));
+	checkSymmerge(new_tri2, neighbour);
+	
 
 	//glue the two new triangle
-	fmerge(enext(new_tri1), enext(new_tri2));
-	fmerge(sym(enext(new_tri1)), sym(enext(new_tri2)));
+	symMerge(enext(new_tri1), enext(new_tri2));
+	
 
 	int index1=old_tri1>>3;
 	int index2=old_tri2>>3;
-	TriRecord record1=triangles[index1];
+	TriRecord& record1=triangles[index1];
 	record1.addChilds(new_tri1);
 	record1.addChilds(new_tri2);
-	TriRecord record2=triangles[index2];
+	TriRecord& record2=triangles[index2];
 	record2.addChilds(new_tri1);
 	record2.addChilds(new_tri2);
 }
 
 ostream& operator<< (ostream& out, TriRecord i ){
-	out<<"p1:"<<i.vi_[0]<<", p2:"<<i.vi_[1]<<", p3:"<<i.vi_[2]<<", n1:"<<i.fnext_[0]<<", n2:"<<i.fnext_[1]<<", n3:"<<i.fnext_[2]<<", n4:"<<i.fnext_[3]<<", n5:"<<i.fnext_[4]<<", n6:"<<i.fnext_[5];
+	out<<"p1:"<<i.vi_[0]<<", p2:"<<i.vi_[1]<<", p3:"<<i.vi_[2]<<", n1:"<<(i.fnext_[0]>>3)<<", n2:"<<(i.fnext_[1]>>3)<<", n3:"<<(i.fnext_[2]>>3)<<", n4:"<<i.fnext_[3]<<", n5:"<<i.fnext_[4]<<", n6:"<<i.fnext_[5];
 	out<<" childs:";
 	for (vector<OrTri>::iterator it=i.childs.begin() ; it < i.childs.end(); it++ )
        out << " " << *it;
@@ -209,9 +215,10 @@ ostream& operator<< (ostream& out, TriRecord i ){
 }
 
 ostream& operator<< (ostream& out, Trist i ){
-	
-	for (vector<TriRecord>::iterator it=i.triangles.begin() ; it < i.triangles.end(); it++ )
-       out <<*it<<endl;
+	int c=0;
+	for (vector<TriRecord>::iterator it=i.triangles.begin() ; it < i.triangles.end(); it++ ){
+       out<<c++<<*it<<endl;
+	}
 	return out;
 }
 
