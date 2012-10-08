@@ -35,9 +35,11 @@ class TriRecord {
 		int vi_[3];
 		OrTri fnext_[6];
     public:	
+		TriRecord(int p1, int p2, int p3);
 		std::vector<OrTri> childs;
 		bool isLeaf(){return childs.empty();};
-
+		void addChilds(OrTri tri){childs.push_back(tri);};
+		void setFnext(int version, OrTri tri){fnext_[version]=tri;};
 	friend Trist;
 };
 
@@ -60,7 +62,7 @@ class Trist {
 
 		OrTri findPoint(int pIndex); //tranverse through the tree structure. Starting from the first one, which is the biggest triangle.
 		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3); //auto merge 3 new triangles to their neigbours. insert new triangle to the childs.
-		void flipEdge(OrTri old_tri1, OrTri old_tri2, OrTri& new_tri1, OrTri& new_tri2);//auto merge 2 new triangles to their neigbour.
+		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);//auto merge 2 new triangles to their neigbour.
 
 		OrTri enext(OrTri ef);
 		OrTri sym(OrTri ef);
