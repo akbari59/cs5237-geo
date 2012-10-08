@@ -62,8 +62,12 @@ class Trist {
 		void delAllTri();
 
 		OrTri findPoint(int pIndex); //tranverse through the tree structure. Starting from the first one, which is the biggest triangle.
-		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3); //auto merge 3 new triangles to their neigbours. insert new triangle to the childs.
-		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);//auto merge 2 new triangles to their neigbour.
+		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3);
+		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3);/*Let tri=abc, and pIndex=d, then tri1=abd, tri2=bcd, tri3=cad. The first edge of the new triangles are those of the old one.*/
+		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);/*It will get the old_tri2 via fnext(old_tri1). If fnext(old_tri1) does not exists (fnext(old_tri1)==-1), error will be thrown.
+          Let old_tri1=abc and  fnext(old_tri1)=abd, then new_tri1=cbd & new_tri2=cad. 
+          See https://docs.google.com/drawings/d/1aOrZ-GqLbIy5RuQ4wvi8iAj6riscrHvxhkr_tafIPPs/edit
+          Take note of the orientation,  it means flipEdge(enext(enext(new_tri1))...) will give you the original triangulation, which should NOT be done (it introduces circle in the tree structure).*/
 
 		OrTri enext(OrTri ef);
 		OrTri sym(OrTri ef);
