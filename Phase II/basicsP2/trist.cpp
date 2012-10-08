@@ -51,7 +51,7 @@ void Trist::delAllTri()
 }
 
 OrTri Trist::enext(OrTri ef){
-	int version = ef && 7;
+	int version = ef & 7;
 	int index = ef >> 3;
 	
 		return (index<<3) | Trist::en_[version];
@@ -59,14 +59,14 @@ OrTri Trist::enext(OrTri ef){
 }
 
 OrTri Trist::fnext(OrTri ef){
-	int version = ef && 7;
+	int version = ef & 7;
 	int index = ef >> 3;	
 	return triangles[index].fnext_[ef]; 	
 }
 
 
 OrTri Trist::sym(OrTri ef){
-	int version = ef && 7;
+	int version = ef & 7;
 	int index = ef >> 3;
 	
 		if(version<3){
@@ -79,7 +79,7 @@ OrTri Trist::sym(OrTri ef){
 
 void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
 	int index = ef >> 3;
-	int version = ef && 7;
+	int version = ef & 7;
 	TriRecord record = Trist::triangles.at(index);
 	/*if(record.isEmpty){
 		pIdx1=-1;
@@ -93,7 +93,7 @@ void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
 }
 
 int Trist::org(OrTri ef){
-	int version = ef && 7;
+	int version = ef & 7;
 	int index = ef >> 3;
 	TriRecord record = Trist::triangles.at(index);
 	
@@ -102,7 +102,7 @@ int Trist::org(OrTri ef){
 }
 
 int Trist::dest(OrTri ef){
-	int version = ef && 7;
+	int version = ef & 7;
 	int index = ef >> 3;
 	TriRecord record = Trist::triangles.at(index);
 	
@@ -154,9 +154,9 @@ void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& 
 
 void Trist::fmerge(OrTri abc, OrTri abd){
 	int index1=abc>>3;
-	int version1= abc && 7;
+	int version1= abc & 7;
 	int	index2=abd>>3;
-	int	version2=abd && 7;
+	int	version2=abd & 7;
 	triangles[index1].setFnext(version1, abd);
 	triangles[index2].setFnext(version2, abc);
 	
@@ -198,6 +198,21 @@ void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto me
 	TriRecord record2=triangles[index2];
 	record2.addChilds(new_tri1);
 	record2.addChilds(new_tri2);
+}
+
+ostream& operator<< (ostream& out, TriRecord i ){
+	out<<"p1:"<<i.vi_[0]<<", p2:"<<i.vi_[1]<<", p3:"<<i.vi_[2]<<", n1:"<<i.fnext_[0]<<", n2:"<<i.fnext_[1]<<", n3:"<<i.fnext_[2]<<", n4:"<<i.fnext_[3]<<", n5:"<<i.fnext_[4]<<", n6:"<<i.fnext_[5];
+	out<<" childs:";
+	for (vector<OrTri>::iterator it=i.childs.begin() ; it < i.childs.end(); it++ )
+       out << " " << *it;
+	return out;
+}
+
+ostream& operator<< (ostream& out, Trist i ){
+	
+	for (vector<TriRecord>::iterator it=i.triangles.begin() ; it < i.triangles.end(); it++ )
+       out <<*it<<endl;
+	return out;
 }
 
 

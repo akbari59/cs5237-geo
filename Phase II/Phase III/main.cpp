@@ -1,6 +1,3 @@
-
-#define WIN32
-
 #include "math.h"
 #include <iostream>
 #include <fstream>
@@ -16,7 +13,7 @@
 #include "pointSetArray.h"
 #include "trist.h"
 #include "GL\glut.h"
-#include <Windows.h>
+
 
 using namespace std;
 
@@ -577,5 +574,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-
-
