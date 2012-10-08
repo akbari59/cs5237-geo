@@ -75,6 +75,8 @@ class Trist {
 		int dest(OrTri); // the index of the second vertex of OrTri, e.g. org(bcd) => c
 
 		void fmerge(OrTri abc, OrTri abd); // glue two neighbouring triangles, result abd = fnext(abc)
+		void checkSymmerge(OrTri abc, OrTri abd);
+		void symMerge(OrTri abc, OrTri abd);
 		void fdetach(OrTri abc); // detach triangle abc with all its neighbours (undo fmerge)
 
 		void incidentTriangles(int ptIndex,int& noOrTri, OrTri* otList); // A suggested function: you may want this function to return all the OrTri
