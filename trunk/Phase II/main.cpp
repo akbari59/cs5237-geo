@@ -16,7 +16,6 @@
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
 #include "GL\glut.h"
-#include <Windows.h>
 
 using namespace std;
 

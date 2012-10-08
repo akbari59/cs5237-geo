@@ -41,6 +41,7 @@ class TriRecord {
 		void addChilds(OrTri tri){childs.push_back(tri);};
 		void setFnext(int version, OrTri tri){fnext_[version]=tri;};
 	friend Trist;
+	friend ostream& operator<< (ostream& out, TriRecord i );
 };
 
 class Trist {
@@ -79,9 +80,11 @@ class Trist {
 		void incidentTriangles(int ptIndex,int& noOrTri, OrTri* otList); // A suggested function: you may want this function to return all the OrTri
 		                                                                 // that are incident to this point
 		                                                                 // Ignore this if you don't feel a need
+		friend ostream& operator<< (ostream& out, Trist i );
 
 };
 
 
-
+ostream& operator<< (ostream& out, TriRecord i );
+ostream& operator<< (ostream& out, Trist i );
 #endif
