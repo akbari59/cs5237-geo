@@ -61,9 +61,14 @@ class Trist {
 		                    // You may want to make sure all its neighbours are detached (below)
 		void delAllTri();
 
-		OrTri findPoint(int pIndex); //tranverse through the tree structure. Starting from the first one, which is the biggest triangle.
-		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3);
+		OrTri findPoint(int pIndex, bool& boundary); /*tranverse through the tree structure. Starting from the first one, which is the biggest triangle.
+																  Boundary indicates whether the point lies on the boundary, true for on the boundary, false for inside the triangle
+																  If  boundary=true, the point lies on the 1st edge of the return oriented triangle.
+																  That's let the return triangle be abc, then the point p is on edge ab.
+													 */               
+		
 		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3);/*Let tri=abc, and pIndex=d, then tri1=abd, tri2=bcd, tri3=cad. The first edge of the new triangles are those of the old one.*/
+		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4); //use when pIndex is on the first edge of the oriented triangle tri. 
 		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);/*It will get the old_tri2 via fnext(old_tri1). If fnext(old_tri1) does not exists (fnext(old_tri1)==-1), error will be thrown.
           Let old_tri1=abc and  fnext(old_tri1)=abd, then new_tri1=cbd & new_tri2=cad. 
           See https://docs.google.com/drawings/d/1aOrZ-GqLbIy5RuQ4wvi8iAj6riscrHvxhkr_tafIPPs/edit
