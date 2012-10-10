@@ -344,8 +344,14 @@ void init(void)
 //should be optimized
 OrTri getCicumscribeTri(int p)
 {
+
 	OrTri result = -1;
 	int intri_result;
+	int isLeaf = 0;
+	OrTri orindex= 0;
+	int p1, p2, p3;
+
+
 	for(int i=0; i<trist.noTri() ;i++)
 	{
 		int p1, p2, p3;
@@ -364,14 +370,21 @@ OrTri getCicumscribeTri(int p)
 }
 //should be optimized
 
-bool CheckIsDelaunay(OrTri  t, int p)
+bool CheckIsDelaunay(OrTri  t, int lastpoint, OrTri&  n)
 {
 		int p1, p2, p3;
-		OrTri orindex= t<<3;
+		OrTri orindex= t;
 		trist.getVertexIdx(orindex, p1, p2, p3);
-		if ( psa.inCircle2(p1,p2,p3,p) != 1)
-			return true;
-		return false;
+		for(int i=1; i<=lastpoint;i++)
+		{
+			if ((i == p1) || (i==p2) || (i == p3)) continue;
+			if ( psa.inCircle2(p1,p2,p3,i) == 1)
+			{
+
+				return false;
+			}
+		}
+		return true;
 
 }
 
@@ -386,11 +399,15 @@ bool CheckIsDelaunay(OrTri  t, int p)
 //
 //}
 
-//bool flipEdge(OrTri t, int p1, int p2);
+bool flipEdge(OrTri t, int p1, int p2)
+{
+
+	return false;
+}
 
 bool delaunayComputation()
 {
-	if (psa.noPt() < 3) return false;	// nothing to handle
+	//if (psa.noPt() < 3) return false;	// nothing to handle
 
 	// Determine the bounding box.
 	LongInt xMin, yMin;
@@ -418,8 +435,8 @@ bool delaunayComputation()
 
 
 	// Make the bounding box slightly bigger, just to feel safe.
-	LongInt ddx = dx + 10;
-	LongInt ddy = dy + 10;
+	LongInt ddx = dx + 50;
+	LongInt ddy = dy + 50;
 
 	LongInt temp = 2;
 
@@ -435,11 +452,14 @@ bool delaunayComputation()
 	// We could have made the 'super triangle' simply very big. However, the algorithm is quite sensitive to
 	// rounding errors, so it's better to make the 'super triangle' just big enough, like we do here.
 
-	int p1 = psa.addPoint(xMin - dy * (sqrt3 / 3.0F), yMin);
-	int p2 = psa.addPoint(xMax + dy * (sqrt3 / 3.0F), yMin);
+	int p1 = psa.addPoint(xMin - dy * (sqrt3 / 3.0F) , yMin );
+	int p2 = psa.addPoint(xMax + dy * (sqrt3 / 3.0F) , yMin );
 	int p3 = psa.addPoint((xMin + xMax) * 0.5 , yMax + dx * sqrt3 * 0.5 );
 
 	trist.makeTri(p1,p2,p3);
+	display();
+	Sleep(5000);
+		
 
 	////DEBUG STUFF
 	//LongInt temp1, temp2;
@@ -455,23 +475,28 @@ bool delaunayComputation()
 	for(int i= 1; i <= psa.noPt()-3 ; i++)
 	{
 
-		OrTri orindex = getCicumscribeTri(i);
+		//OrTri orindex = getCicumscribeTri(i);
+		bool boundry;
+		OrTri orindex = trist.findPoint(i,boundry,psa);;
 		cout << "CicumscribeTri for point" << i <<"is  " << orindex << endl;
 		
 		int a, b, c;
 		trist.getVertexIdx(orindex, a, b, c);
 
 		
-		trist.delTri(orindex);
-		int t1 = trist.makeTri(a, b, i);
-		int t2 = trist.makeTri(b, c, i);
-		int t3 = trist.makeTri(c, a, i);
+		//trist.delTri(orindex);
+		//int t1 = trist.makeTri(a, b, i);
+		//int t2 = trist.makeTri(b, c, i);
+		//int t3 = trist.makeTri(c, a, i);
+
+		OrTri t1, t2, t3; 
+		trist.insertPoint(i,orindex,t1, t2, t3);
 		
 		//DEBUG STUFF
 
-		circumcir1 = t1<<3;
-		circumcir2 = t2<<3;
-		circumcir3 = t3<<3;
+		circumcir1 = t1;
+		circumcir2 = t2;
+		circumcir3 = t3;
 		
 //		glutPostRedisplay();
 
@@ -479,20 +504,20 @@ bool delaunayComputation()
 		display();
 		Sleep(5000);
 		
-		
+			
 		//MOST IMPORTANT PART
 		//SHOULD IMPLEMENT AN TREEEEEEEEEEEEEEEEE
 
-		if(!CheckIsDelaunay(t1, c) || ){
+		if(!CheckIsDelaunay(t1, c, i)  ){
 			cout << "t1 is not delaunt" << endl;
 
 					
 		}
-		if(!CheckIsDelaunay(t2, a)){
+		if(!CheckIsDelaunay(t2, a, i)){
 			cout << "t2 is not delaunt" << endl;
 		
 		}
-		if(!CheckIsDelaunay(t3, b)){
+		if(!CheckIsDelaunay(t3, b, i)){
 			cout << "t3 is not delaunt" << endl;
 		
 		}

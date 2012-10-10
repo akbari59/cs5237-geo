@@ -1,4 +1,5 @@
 #include "trist.h"
+#include "pointSetArray.h"
 
 
 Trist::Trist()
@@ -115,6 +116,7 @@ int Trist::dest(OrTri ef){
 void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3){
 	int p1, p2, p3;
 	int index=tri>>3;
+
 	getVertexIdx(tri, p1, p2, p3);	
 	tri1=makeTri(p1, p2, pIndex)<<3;	
 	tri2=makeTri(p2, p3, pIndex)<<3;	
@@ -144,17 +146,20 @@ void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& 
 	record.addChilds(tri3);
 
 }//auto merge 3 new triangles to their neigbours. insert new triangle to the childs.
+
 void Trist::checkSymmerge(OrTri abc, OrTri abd){
-	if(abc!=-1&&abd!=-1)
+	if(abc!=-1 && abd!=-1 )
 	  symMerge(abc, abd);
 	
 }
+
 void Trist::symMerge(OrTri abc, OrTri abd){
 	
 	  fmerge(abc, abd);
 	  fmerge(sym(abc), sym(abd));
 	
 }
+
 void Trist::fmerge(OrTri abc, OrTri abd){
 	int index1=abc>>3;
 	int version1= abc & 7;
@@ -164,6 +169,7 @@ void Trist::fmerge(OrTri abc, OrTri abd){
 	triangles[index2].setFnext(version2, abc);
 	
 }
+
 void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto merge 2 new triangles to their neigbour.
 	OrTri old_tri2=fnext(old_tri1);
 	int p1, p2, p3;
@@ -223,3 +229,45 @@ ostream& operator<< (ostream& out, Trist i ){
 }
 
 
+OrTri Trist::findPoint(int pIndex, bool& boundary, PointSetArray psa)
+{
+
+	
+	int intri_result = -1;
+	bool isLeaf = false;
+	int  index= 0;
+	int p1, p2, p3;
+	//start from root
+	TriRecord triRec=triangles[0];
+	OrTri ot = 0;
+
+	//Search thorough tree untill we reach a leaf
+	while(!isLeaf)
+	{
+
+		//check for every child and find the one that our point is inside it
+		for(int i = 0; i < triRec.childs.size(); i++)
+		{
+			ot = triRec.childs[i];
+			this->getVertexIdx(ot, p1, p2, p3);
+			intri_result=psa.inTri(p1, p2, p3, pIndex);
+			// is inside triangles
+			if(intri_result == 1)
+			{
+				triRec = triangles[ot>>3];
+
+			}else if(intri_result == 0)	// is on the boundry
+			{
+				triRec = triangles[ot>>3];
+				boundary = true;
+			}
+
+		}
+
+		if (triRec.isLeaf()) isLeaf = true;
+		
+	}
+
+	return ot;
+
+}
