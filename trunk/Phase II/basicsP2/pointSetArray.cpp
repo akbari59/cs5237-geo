@@ -19,6 +19,7 @@ void PointSetArray::eraseAllPoints(){
 	set.clear();
 }
 
+//dangerous routine
 int PointSetArray::removePoint (int pIndex)
 {
 	if(pIndex<=set.size()){
