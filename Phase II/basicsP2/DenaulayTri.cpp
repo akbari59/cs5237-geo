@@ -9,7 +9,7 @@ int DenaulayTri::inTri(OrTri& tri, int p){
 		min=1;
 	if(tri_p[min]<tri_p[2])
 	    min=2;
-	if(tri_p[min]>1){
+	if(tri_p[min]>0){
 		o=psa.inTri(tri_p[0],tri_p[1],tri_p[2],edge);
 		if(o==0)
 		 for (;edge>0;edge--)
@@ -114,4 +114,17 @@ bool DenaulayTri::checkLegal(OrTri tri){
 	}else{
 		return true;
 	}
+}
+
+void DenaulayTri::flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2){
+	trist.flipEdge(old_tri1, new_tri1, new_tri2);
+}
+void DenaulayTri::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3){
+	trist.insertPoint(pIndex, tri, tri1, tri2, tri3);
+}
+void DenaulayTri::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4){
+	trist.insertPoint(pIndex, tri, tri1, tri2, tri3, tri4);
+}
+DenaulayTri::DenaulayTri(){
+	trist.makeTri(0, -1, -2);
 }
