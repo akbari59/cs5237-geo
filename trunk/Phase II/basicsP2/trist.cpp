@@ -239,7 +239,7 @@ ostream& operator<< (ostream& out, Trist i ){
 	//start from root
 	TriRecord triRec=triangles[0];
 	OrTri ot = 0;
-
+	boundary = false;
 	//Search thorough tree untill we reach a leaf
 	while(!isLeaf)
 	{
@@ -258,6 +258,8 @@ ostream& operator<< (ostream& out, Trist i ){
 			}else if(intri_result == 0)	// is on the boundry
 			{
 				triRec = triangles[ot>>3];
+				//should be fixed
+				//FIXME:
 				boundary = true;
 			}
 

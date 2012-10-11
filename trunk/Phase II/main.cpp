@@ -58,7 +58,7 @@ Trist worksetTrist;
 PointSetArray worksetPsa;
 
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
-
+OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
 
 
 void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 0, float opaque = 0)
@@ -87,10 +87,11 @@ void drawALine(double x1,double y1, double x2, double y2)
 		glPointSize(1);
 }
 
-void drawATriangle(double x1,double y1, double x2, double y2, double x3, double y3)
+void drawATriangle(double x1,double y1, double x2, double y2, double x3, double y3, float red = 0, float green = 0.5, float blue = 0, float opaque = 0)
 {
 		glBegin(GL_POLYGON);
-		glColor3f(0,0.5,0);
+		//glColor3f(0,0.5,0);
+		glColor4f(red,green,blue, opaque);
 			glVertex2d(x1,y1);
 			glVertex2d(x2,y2);
 			glVertex2d(x3,y3);
@@ -136,6 +137,19 @@ void drawCircumscribeCircleForTriangle(OrTri t)
 		drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 
 }
+void drawOriTri(OrTri t){
+		
+	if ( t == -1) return;
+
+		int tmppi1,tmppi2, tmppi3;
+		trist.getVertexIdx(t,tmppi1,tmppi2,tmppi3);
+		LongInt x1,y1,x2,y2,x3,y3;
+		psa.getPoint(tmppi1,x1,y1);
+		psa.getPoint(tmppi2,x2,y2);
+		psa.getPoint(tmppi3,x3,y3);
+		drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(), 0.5,0,0);
+		//drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+}
 void drawTrist(){
 	//contain all drawing code.
 	//get data from global variables trist & psa
@@ -161,7 +175,7 @@ void drawTrist(){
 //		drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 
 		//DEBUG STUFF
-		cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
+		//cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
 	}
 
 	for(int i= 1; i<=psa.noPt(); i++)
@@ -192,7 +206,12 @@ void drawTrist(){
 	drawCircumscribeCircleForTriangle(circumcir2);
 	drawCircumscribeCircleForTriangle(circumcir3);
 
-
+	glutSwapBuffers();
+	
+	drawOriTri(tempOriTri1);
+	drawOriTri(tempOriTri2);
+	drawOriTri(tempOriTri3);
+	
 	
 	
 }
@@ -338,6 +357,7 @@ void GetOGLPos(int x, int y, int& wx, int& wy, int& wz)
 void init(void)
 {
 	glClearColor (1.0,1.0,1.0, 1.0);
+	glShadeModel(GL_FLAT);
 }
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -387,6 +407,17 @@ bool CheckIsDelaunay(OrTri  t, int lastpoint, OrTri&  n)
 		return true;
 
 }
+
+bool CheckIsDelaunay2(OrTri  t)
+{
+	OrTri  neighborhood;
+	neighborhood = trist.fnext(t);
+	drawOriTri(neighborhood);
+	Sleep(2000);
+	return true;
+
+}
+
 
 //bool CheckIsDelaunay(OrTri  t, int p)
 //{
@@ -438,40 +469,43 @@ bool delaunayComputation()
 	LongInt ddx = dx + 50;
 	LongInt ddy = dy + 50;
 
-	LongInt temp = 2;
+	//LongInt temp = 2;
 
-	xMin = xMin - ddx;
-	xMax = xMax + ddx;
-	dx = dx + temp * ddx;
+	//xMin = xMin - ddx;
+	//xMax = xMax + ddx;
+	//dx = dx + temp * ddx;
 
-	yMin = yMin - ddy;
-	yMax = yMax + ddy;
-	dy = dy + temp * ddy;
+	//yMin = yMin - ddy;
+	//yMax = yMax + ddy;
+	//dy = dy + temp * ddy;
 
-	// Create a 'super triangle', encompassing all the vertices. We choose an equilateral triangle with horizontal base.
-	// We could have made the 'super triangle' simply very big. However, the algorithm is quite sensitive to
-	// rounding errors, so it's better to make the 'super triangle' just big enough, like we do here.
+	//// Create a 'super triangle', encompassing all the vertices. We choose an equilateral triangle with horizontal base.
+	//// We could have made the 'super triangle' simply very big. However, the algorithm is quite sensitive to
+	//// rounding errors, so it's better to make the 'super triangle' just big enough, like we do here.
 
-	int p1 = psa.addPoint(xMin - dy * (sqrt3 / 3.0F) , yMin );
-	int p2 = psa.addPoint(xMax + dy * (sqrt3 / 3.0F) , yMin );
-	int p3 = psa.addPoint((xMin + xMax) * 0.5 , yMax + dx * sqrt3 * 0.5 );
+	//int p1 = psa.addPoint(xMin - dy * (sqrt3 / 3.0F) , yMin );
+	//int p2 = psa.addPoint(xMax + dy * (sqrt3 / 3.0F) , yMin );
+	//int p3 = psa.addPoint((xMin + xMax) * 0.5 , yMax + dx * sqrt3 * 0.5 );
+
+	LongInt M;
+	if(dx > dy ) M = dx; else M = dy; 
+	LongInt temp = 3;
+	
+	int p1 = psa.addPoint(temp * M, 0);
+	int p2 = psa.addPoint(0, temp * M);
+	int p3 = psa.addPoint(- temp * M, -temp * M);
+
 
 	trist.makeTri(p1,p2,p3);
-	display();
-	Sleep(5000);
-		
-
-	////DEBUG STUFF
-	//LongInt temp1, temp2;
-	//psa.getPoint(p1,temp1, temp2);
-	//cout<< "BIG TRIANGLE = ";
-	//cout << temp1<< " " << temp2 << "==>";
-	//psa.getPoint(p2,temp1, temp2);
-	//cout << temp1<< " " << temp2 << "==>";
-	//psa.getPoint(p3,temp1, temp2);
-	//cout << temp1<< " " << temp2 << endl;
-	////END OF DEBUG STUFF
 	
+	
+	
+//	width = xMax.doubleValue() - xMin.doubleValue();
+//	height = yMax.doubleValue() - yMin.doubleValue();
+
+	display();
+	
+		
 	for(int i= 1; i <= psa.noPt()-3 ; i++)
 	{
 
@@ -484,30 +518,27 @@ bool delaunayComputation()
 		trist.getVertexIdx(orindex, a, b, c);
 
 		
-		//trist.delTri(orindex);
-		//int t1 = trist.makeTri(a, b, i);
-		//int t2 = trist.makeTri(b, c, i);
-		//int t3 = trist.makeTri(c, a, i);
-
 		OrTri t1, t2, t3; 
 		trist.insertPoint(i,orindex,t1, t2, t3);
 		
-		//DEBUG STUFF
 
 		circumcir1 = t1;
 		circumcir2 = t2;
 		circumcir3 = t3;
 		
-//		glutPostRedisplay();
-
-		//END OF DEBUG STUFF
 		display();
-		Sleep(5000);
+		Sleep(100);
 		
 			
 		//MOST IMPORTANT PART
 		//SHOULD IMPLEMENT AN TREEEEEEEEEEEEEEEEE
 
+		//CheckIsDelaunay2(t1);
+		tempOriTri1 = trist.fnext(t1);
+		tempOriTri2 = trist.fnext(trist.enext(t1));
+		tempOriTri3 = trist.fnext(trist.enext(trist.enext(t1)));
+		Sleep(2000);
+/*
 		if(!CheckIsDelaunay(t1, c, i)  ){
 			cout << "t1 is not delaunt" << endl;
 
@@ -522,9 +553,7 @@ bool delaunayComputation()
 		
 		}
 
-		//glutPostRedisplay();
-		//display();
-		
+*/	
 
 
 	}
@@ -803,9 +832,41 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 	glutPostRedisplay();
 }
 
+void generate_test_input(int num, int bound)
+{
+	
+	//write to  ¡°input.txt¡± get data from global variables trist & psa
+	double instCount = 0; // Instruction count
+	ofstream outputFile("input.txt",ios::out); // output file
+
+	
+  /* initialize random seed: */
+  srand ( time(NULL) );
+
+  
+
+  // obtain individual point data from psa and writing the AP command
+	for(int i= 1; i<=num; i++)
+	{
+		double dx = -bound/2 + rand() % bound + 1;
+		double dy = -bound/2 + rand() % bound + 1;
+		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": AP " << dx << " " << dy << endl;
+		instCount++;
+	}
+
+	outputFile<<std::setw(4) << std::setfill('0') << instCount << ": CD " << endl;
+
+
+	outputFile.close();
+}
+
 
 int main(int argc, char **argv)
 {
+	//generate_test_input(100, 400);
+	//return 0;
+
+
 	width = 1000; height = 800;
 	cout<<"CS5237 Phase II"<< endl<< endl;
 	cout << "Right mouse click: OT operation"<<endl;
