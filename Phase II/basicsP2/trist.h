@@ -47,11 +47,11 @@ class TriRecord {
 class Trist {
 
 	protected:
-		std::vector<TriRecord> triangles;
+		
 		int en_[6];
 		int v_[6];
 	public:
-		
+		std::vector<TriRecord> triangles;
 		Trist();
 		int noTri(); // return the number of triangles
 		int makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false); // Add a triangle into the Trist with the three point indices
@@ -69,15 +69,16 @@ class Trist {
 													 */               
 		
 		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3);
-		/*Let tri=abc, and pIndex=d, then tri1=abd, tri2=bcd, tri3=cad. The first edge of the new triangles are those of the old one.*/
+		/*Let tri=abc, and pIndex=d, then tri1=dab, tri2=dbc, tri3=dca. */
 		
 		void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4); 
+		void splitTri(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2);
 		//use when pIndex is on the first edge of the oriented triangle tri. 
 		
-		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);/*It will get the old_tri2 via fnext(old_tri1). If fnext(old_tri1) does not exists (fnext(old_tri1)==-1), error will be thrown.
-          Let old_tri1=abc and  fnext(old_tri1)=abd, then new_tri1=cbd & new_tri2=cad. 
-          See https://docs.google.com/drawings/d/1aOrZ-GqLbIy5RuQ4wvi8iAj6riscrHvxhkr_tafIPPs/edit
-          Take note of the orientation,  it means flipEdge(enext(enext(new_tri1))...) will give you the original triangulation, which should NOT be done (it introduces circle in the tree structure).*/
+		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);/*It will get the old_tri2 via fnext(enext(old_tri1)). If fnext(enext(old_tri1)) does not exists (fnext(enext(old_tri1))==-1), error will be thrown.
+          Let old_tri1=abc and  fnext(enext(old_tri1))=bcd, then new_tri1=abd & new_tri2=acd. 
+          
+          */
 
 		OrTri enext(OrTri ef);
 		OrTri sym(OrTri ef);
