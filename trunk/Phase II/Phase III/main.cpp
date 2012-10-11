@@ -5,8 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-
-
 #include <cstdio>
 #include <fstream>
 #include <strstream>
@@ -17,7 +15,7 @@
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
 #include "Circle.h"
-#include "glut.h"
+#include "GL\glut.h"
 #include <Windows.h>
 
 using namespace std;
