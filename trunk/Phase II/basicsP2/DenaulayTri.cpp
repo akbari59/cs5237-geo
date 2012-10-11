@@ -64,7 +64,7 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 	int intri_result;
 	
 	int  index= 0;
-	int p1, p2, p3;
+	
 	//start from root
 	TriRecord triRec=trist.triangles[0];
 	OrTri ot = 0;
@@ -74,7 +74,7 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 	{
 
 		//check for every child and find the one that our point is inside it
-		for(int i = 0; i < triRec.childs.size(); i++)
+		for(unsigned i = 0; i < triRec.childs.size(); i++)
 		{
 			ot = triRec.childs[i];
 			
@@ -99,7 +99,7 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 		
 	}
 	if(intri_result==0)
-		boundary==true;
+		boundary=true;
 	return ot;
 
 }
