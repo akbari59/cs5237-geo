@@ -118,26 +118,27 @@ void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& 
 	int index=tri>>3;
 
 	getVertexIdx(tri, p1, p2, p3);	
-	tri1=makeTri(p1, p2, pIndex)<<3;	
-	tri2=makeTri(p2, p3, pIndex)<<3;	
-	tri3=makeTri(p3, p1, pIndex)<<3;
+	tri1=makeTri(pIndex, p1, p2 )<<3;	
+	tri2=makeTri(pIndex, p2, p3 )<<3;	
+	tri3=makeTri(pIndex, p3, p1 )<<3;
 
 	//set neigbours
 	//links to neigbours tri
 	OrTri neighbour=fnext(tri);
 	
-	checkSymmerge(tri1, neighbour);
+	checkSymmerge(enext(tri1), neighbour);
 	tri=enext(tri);
 	neighbour=fnext(tri);
-	checkSymmerge(tri2, neighbour);
+	checkSymmerge(enext(tri2), neighbour);
 	tri=enext(tri);
 	neighbour=fnext(tri);
-	checkSymmerge(tri3, neighbour);
+	checkSymmerge(enext(tri3), neighbour);
 	
 	//merge among tri1, tri2 & tri3
-	symMerge(enext(tri1), enext(sym(tri2)));
-	symMerge(enext(tri2), enext(sym(tri3)));
-	symMerge(enext(tri3), enext(sym(tri1)));
+	symMerge(enext(enext(tri1)), sym(tri2));
+	symMerge(enext(enext(tri2)), sym(tri3));
+	symMerge(enext(enext(tri3)), sym(tri1));
+	
 
 	//add childs
 	TriRecord& record=triangles[index];
@@ -171,35 +172,33 @@ void Trist::fmerge(OrTri abc, OrTri abd){
 }
 
 void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto merge 2 new triangles to their neigbour.
-	OrTri old_tri2=fnext(old_tri1);
+	OrTri old_tri2=fnext(enext(old_tri1));
 	int p1, p2, p3;
 	getVertexIdx(old_tri1, p1, p2, p3);
 	int p4=dest(enext(old_tri2));
 
-	new_tri1=makeTri(p3, p2, p4)<<3;	
-	new_tri2=makeTri(p3, p1, p4)<<3;
+	new_tri1=makeTri(p1, p2, p4)<<3;	
+	new_tri2=makeTri(p1, p3, p4)<<3;
 
 	//glue the new 2 triangles with neighbours of old triangles
-	OrTri neighbour=fnext(sym(enext(old_tri1)));
+	OrTri neighbour=fnext(old_tri1);
 	checkSymmerge(new_tri1, neighbour);
 	
-	neighbour=fnext(enext(enext(old_tri1)));
+	neighbour=fnext(enext(sym(old_tri1)));
 	checkSymmerge(new_tri2, neighbour);
 	
 
-	new_tri1=enext(new_tri1);
-	new_tri2=enext(new_tri2);
-
-	neighbour=fnext(enext(old_tri2));
-	checkSymmerge(new_tri1, neighbour);
 	
 
-	neighbour=fnext(enext(sym(old_tri2)));
-	checkSymmerge(new_tri2, neighbour);
+	
+	checkSymmerge(enext(new_tri1), fnext(enext(sym(old_tri2))));
+	checkSymmerge(enext(new_tri2), fnext(enext(old_tri2)));
+
+	
 	
 
 	//glue the two new triangle
-	symMerge(enext(new_tri1), enext(new_tri2));
+	symMerge(enext(enext(new_tri1)), enext(enext(new_tri2)));
 	
 
 	int index1=old_tri1>>3;
@@ -229,7 +228,7 @@ ostream& operator<< (ostream& out, Trist i ){
 }
 
 
-OrTri Trist::findPoint(int pIndex, bool& boundary, PointSetArray psa)
+/*OrTri Trist::findPoint(int pIndex, bool& boundary, PointSetArray psa)
 {
 
 	
@@ -270,4 +269,32 @@ OrTri Trist::findPoint(int pIndex, bool& boundary, PointSetArray psa)
 
 	return ot;
 
+}*/
+
+void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4){
+	splitTri(pIndex, tri, tri1, tri2);
+	//neighbour must exists, a point cannot lie on the imaginary boundary.
+	OrTri neighbour=fnext(tri);
+
+
+	splitTri(pIndex, neighbour, tri3, tri4);
+	symMerge(tri1, tri3);	
+	symMerge(tri2, tri4);
+	
+
+}
+void Trist::splitTri(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2){
+	int p1, p2, p3;
+	int index=tri>>3;
+
+	getVertexIdx(tri, p1, p2, p3);	
+	tri1=makeTri(pIndex, p1, p3)<<3;	
+	tri2=makeTri(pIndex, p2, p3)<<3;	
+	checkSymmerge(enext(tri1), fnext(enext(sym(tri))));
+	checkSymmerge(enext(tri2), fnext(enext(tri)));
+	symMerge(enext(enext(tri1)),enext(enext(tri2)));
+
+	TriRecord& record1=triangles[index];
+	record1.addChilds(tri1);
+	record1.addChilds(tri2);
 }
