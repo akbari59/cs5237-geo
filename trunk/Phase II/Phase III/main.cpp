@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <queue>
 
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
@@ -560,6 +561,40 @@ bool delaunayComputation()
 
 }
 
+void insertPoint(LongInt x, LongInt y) {
+	
+	int point = psa.addPoint(x,y);
+	bool boundary,legal;
+	OrTri tri,testTri;
+	queue<OrTri> triangles;
+
+	// locate the triangle which contains this point. See if it lies on a boundary
+	tri = DenaulayTri.findPoint(point,boundary);
+
+	// If on boundary => delete one triangle and create 3 triangles
+	// else delete 2 triangles and create 4 triangles
+	if(boundary){
+		DenaulayTri.insertPoint(point,tri,triangles.push(new Ortri()),triangles.push(new Ortri()),triangles.push(new Ortri()));		
+	}
+	else{
+		DenaulayTri.insertPoint(point,tri,triangles.push(new Ortri()),triangles.push(new Ortri()),triangles.push(new Ortri()),triangles.push(new Ortri()));
+	}
+
+	// Check if the point is locally delaunay. Else keep flipping edges till it is.
+	while(!triangles.empty()) {
+		testTri = triangles.front();
+		legal = DenaulayTri.checkLegal(testTri);
+		
+		// not LD => flip edge
+		if(!legal){
+			DenaulayTri.flipEdge(testTri,triangles.push(new Ortri()),triangles.push(new Ortri()));
+		}
+
+		triangles.pop();
+	}
+
+}
+
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
@@ -866,7 +901,7 @@ int main(int argc, char **argv)
 
 
 	width = 1000; height = 800;
-	cout<<"CS5237 Phase II"<< endl<< endl;
+	cout<<"CS5237 Phase III"<< endl<< endl;
 	cout << "Right mouse click: OT operation"<<endl;
 	cout << "Q: Quit" <<endl;
 	cout << "R: Read in control points from \"input.txt\"" <<endl;
@@ -878,7 +913,7 @@ int main(int argc, char **argv)
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize (width, height);
 	glutInitWindowPosition (50, 50);
-	glutCreateWindow ("CS5237 Phase II");
+	glutCreateWindow ("CS5237 Phase III");
 	init ();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
