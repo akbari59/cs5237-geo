@@ -322,8 +322,14 @@ int PointSet::symInCircle(int p1Idx, int p2Idx, int p3Idx, int sym){
 	}
 }
 int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx){
-	if(pIdx<1)
-		return -1;
+	if(pIdx<1){
+		if(p2Idx>0&&p3Idx>0)
+		  return -1;
+		else if(pIdx<0&&(p2Idx==0||p3Idx==0))
+			return 1;
+		else
+		    return -1;
+	}
 	else if(p2Idx<1){
 		return symInCircle(p1Idx, p3Idx, pIdx, p2Idx);
 	}else if(p3Idx<1){
