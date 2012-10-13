@@ -13,11 +13,11 @@
 #include <iomanip>
 #include <queue>
 
-#include "pointSetArray.h"
-#include "trist.h"
+#include "basicsP2\pointSetArray.h"
+#include "basicsP2\trist.h"
 #include "Circle.h"
-#include "GL\glut.h"
-#include "DenaulayTri.h"
+#include "glut.h"
+#include "basicsP2\DenaulayTri.h"
 #include <Windows.h>
 
 using namespace std;
@@ -55,11 +55,10 @@ bool file_loaded = false;
 PointSetArray notinsidepsa;*/
 int progress=1;
 int last_pIndex;
-int delay;
 DenaulayTri DenaulayTriangulation;
 
 //Trist worksetTrist;
-//PointSetArray worksetPsa;
+PointSetArray newInsertedPsa;
 
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
@@ -197,17 +196,17 @@ void drawTrist(){
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
-	/*for(int i= 1; i<=notinsidepsa.noPt(); i++)
+	for(int i= 1; i<=newInsertedPsa.noPt(); i++)
 	{
 		LongInt x,y;
-		notinsidepsa.getPoint(i,x,y);
+		newInsertedPsa.getPoint(i,x,y);
 		double tx = x.doubleValue();
 		double ty = y.doubleValue();
 		drawAPoint(tx,ty, 0.6, 0, 0, 0.7);
 
 		//just for debugging purpose
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
-	}*/
+	}
 
 	/*drawCircumscribeCircleForTriangle(circumcir1);
 	drawCircumscribeCircleForTriangle(circumcir2);
@@ -603,15 +602,28 @@ void insertPoint(int pIndex) {
 void delaunayComputation()
 {
 	
+	SYSTEMTIME st;
+
+	cerr << endl;
+	cerr << "delaunay Triangulation By Incremental method:  " << endl;
+
+	GetLocalTime(&st);
+	int start = (((st.wHour*60+st.wMinute)*60)+st.wSecond)*1000+st.wMilliseconds;
+	cerr << "Start: " << start << endl;
 
 	for(; progress <= last_pIndex ; progress++)
 	{
 		
 		insertPoint(progress);
-		if(delay>0)
-				Sleep(delay*1000);
-		display();
+		//display();
+
 	}
+
+	GetLocalTime(&st);
+	int end = (((st.wHour*60+st.wMinute)*60)+st.wSecond)*1000+st.wMilliseconds;
+	cerr << "End: " << end << endl;
+	cerr << "Elapsed Time(ms): " << end-start << endl;
+
 
 	
 }
@@ -660,12 +672,12 @@ void insertPoint(LongInt x, LongInt y) {
 void readFile(){
 
 	string line_noStr;
-	delay=0;
+
 	string line;   // each line of the file
 	string command;// the command of each line
 	string numberStr; // for single LongInt operation
 	
-	
+	int delay=-1;
 	ifstream inputFile("input.txt",ios::in);
 
 
@@ -696,22 +708,18 @@ void readFile(){
 
 		linestream >> line_noStr;
 		linestream >> command;         // get the command
-		if(!command.compare("DY")){
-		  linestream >> numberStr;
-		  delay=atoi(numberStr.c_str());
-		}else if(!command.compare("IP")){
+
+		
+		if(!command.compare("IP")){
 			linestream >> numberStr;
 			LongInt x(numberStr);
 			linestream >> numberStr;
 			LongInt y(numberStr);
 			last_pIndex=DenaulayTriangulation.psa.addPoint(x,y);
-			if(delay>0)
-				Sleep(delay*1000);
-			 display();
+				
 			}	//if(!command.compare("IP")){
 		else if (!command.compare("CD")){
 			delaunayComputation();
-			
 			display();
 		}		 //else if (!command.compare("CD")){
 		else{
@@ -810,9 +818,25 @@ void keyboard (unsigned char key, int x, int y)
 			resetView();
 			break;
 
+		case 'C':
+		case 'c':
 
-		default:
-		break;
+			int start = DenaulayTriangulation.psa.noPt();
+			LongInt x,y;
+			for (int i = 1; i<= newInsertedPsa.noPt(); i++)
+			{
+				newInsertedPsa.getPoint(i,x,y);
+				last_pIndex = DenaulayTriangulation.psa.addPoint(x,y);
+				insertPoint(last_pIndex);
+			}
+			newInsertedPsa.eraseAllPoints();
+			break;
+			
+		
+
+
+		//default:
+		//break;
 	}
 
 	glutPostRedisplay();
@@ -838,44 +862,46 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 	{
 		int wx, wy, wz;
 		GetOGLPos(x,y, wx, wy, wz);
-		int pIndex= DenaulayTriangulation.psa.addPoint(wx,wy);
+		//int pIndex= DenaulayTriangulation.psa.addPoint(wx,wy);
 		int intri_result = -1;
 		bool outsidePoint = true;
 
-	    for(int i=0; i<DenaulayTriangulation.trist.noTri() && (intri_result == -1 );i++){
-				int p1, p2, p3;
-				OrTri orindex= i<<3;
-				DenaulayTriangulation.trist.getVertexIdx(orindex, p1, p2, p3);
-				if(p1!=-1){
-				 intri_result=DenaulayTriangulation.psa.inTri(p1, p2, p3, pIndex);
-				 switch (intri_result)
-				 {
-				 case 1:
+		int ipIndex = newInsertedPsa.addPoint(wx,wy);
 
-					 DenaulayTriangulation.trist.delTri(orindex);
-					 DenaulayTriangulation.trist.makeTri(pIndex,p2,p3);
-					 DenaulayTriangulation.trist.makeTri(p1,pIndex,p3);
-					 DenaulayTriangulation.trist.makeTri(p1,p2,pIndex);
-					 outsidePoint = false;
-					 break;
-				 case 0:
-					 cout << "degenerate case" << endl;
-					 DenaulayTriangulation.psa.removePoint(pIndex);
-					 outsidePoint = false;
-					 //int pIndex2=notinsidepsa.addPoint(wx,wy);
-					 break;
-				 
-				 }//switch
-				} //if
-				
-			} // for
-		/*if(outsidePoint == true)
-		{
-			//cout << "you have clicked outside any triangle. point was discarded." << endl;
-			psa.removePoint(pIndex);
-			int pIndex2=notinsidepsa.addPoint(wx,wy);
-			
-		}*/
+	 //   for(int i=0; i<DenaulayTriangulation.trist.noTri() && (intri_result == -1 );i++){
+		//		int p1, p2, p3;
+		//		OrTri orindex= i<<3;
+		//		DenaulayTriangulation.trist.getVertexIdx(orindex, p1, p2, p3);
+		//		if(p1!=-1){
+		//		 intri_result=DenaulayTriangulation.psa.inTri(p1, p2, p3, pIndex);
+		//		 switch (intri_result)
+		//		 {
+		//		 case 1:
+
+		//			 DenaulayTriangulation.trist.delTri(orindex);
+		//			 DenaulayTriangulation.trist.makeTri(pIndex,p2,p3);
+		//			 DenaulayTriangulation.trist.makeTri(p1,pIndex,p3);
+		//			 DenaulayTriangulation.trist.makeTri(p1,p2,pIndex);
+		//			 outsidePoint = false;
+		//			 break;
+		//		 case 0:
+		//			 cout << "degenerate case" << endl;
+		//			 DenaulayTriangulation.psa.removePoint(pIndex);
+		//			 outsidePoint = false;
+		//			 //int pIndex2=notinsidepsa.addPoint(wx,wy);
+		//			 break;
+		//		 
+		//		 }//switch
+		//		} //if
+		//		
+		//	} // for
+		///*if(outsidePoint == true)
+		//{
+		//	//cout << "you have clicked outside any triangle. point was discarded." << endl;
+		//	psa.removePoint(pIndex);
+		//	int pIndex2=notinsidepsa.addPoint(wx,wy);
+		//	
+		//}*/
 	} //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 
 	glutPostRedisplay();
@@ -899,7 +925,7 @@ void generate_test_input(int num, int bound)
 	{
 		double dx = -bound/2 + rand() % bound + 1;
 		double dy = -bound/2 + rand() % bound + 1;
-		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": AP " << dx << " " << dy << endl;
+		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": IP " << dx << " " << dy << endl;
 		instCount++;
 	}
 
