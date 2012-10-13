@@ -212,6 +212,13 @@ void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto me
 	record2.addChilds(new_tri2);
 }
 
+bool Trist::isLeaf(OrTri tri)
+{
+	int index=tri >> 3;
+	TriRecord& triangleRecord=triangles[index];
+	return triangleRecord.isLeaf();
+}
+
 ostream& operator<< (ostream& out, TriRecord i ){
 	out<<"p1:"<<i.vi_[0]<<", p2:"<<i.vi_[1]<<", p3:"<<i.vi_[2]<<", n1:"<<(i.fnext_[0]>>3)<<", n2:"<<(i.fnext_[1]>>3)<<", n3:"<<(i.fnext_[2]>>3)<<", n4:"<<i.fnext_[3]<<", n5:"<<i.fnext_[4]<<", n6:"<<i.fnext_[5];
 	out<<" childs:";

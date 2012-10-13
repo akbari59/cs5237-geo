@@ -13,11 +13,11 @@
 #include <iomanip>
 #include <queue>
 
-#include "pointSetArray.h"
-#include "trist.h"
+#include "basicsP2\pointSetArray.h"
+#include "basicsP2\trist.h"
 #include "Circle.h"
-#include "GL\glut.h"
-#include "DenaulayTri.h"
+#include "glut.h"
+#include "basicsP2\DenaulayTri.h"
 #include <Windows.h>
 
 using namespace std;
@@ -55,17 +55,20 @@ bool file_loaded = false;
 PointSetArray notinsidepsa;*/
 int progress=1;
 int last_pIndex;
-int delay;
-PointSetArray newInsertedPsa;
 DenaulayTri DenaulayTriangulation;
 
 //Trist worksetTrist;
-//PointSetArray newInsertedPsa;
+PointSetArray newInsertedPsa;
 
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
+OrTri illegalOriTri= -1;
+
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
 
 bool showAnimatiion = true;
+
+int longDelay = 3000;
+int shortDelay = longDelay / 2;
 
 
 void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 0, float opaque = 0)
@@ -80,14 +83,12 @@ void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 
 	glPointSize(1);
 }
 
-
-
-void drawALine(double x1,double y1, double x2, double y2)
+void drawALine(double x1,double y1, double x2, double y2,  float red = 0, float green = 0, float blue = 1, float opaque = 0)
 {
 		glPointSize(1);
 		glBegin(GL_LINE_LOOP);
 		//glColor3f(0,0,1);
-		glColor4f(0,0,1, 0.80);
+		glColor4f(red,green,blue, opaque);
 			glVertex2d(x1,y1);
 			glVertex2d(x2,y2);
 		glEnd();
@@ -148,6 +149,7 @@ void drawCircumscribeCircleForTriangle(OrTri t)
 		}
 
 }
+
 void drawOriTri(OrTri t){
 		
 	if ( t == -1) return;
@@ -161,6 +163,7 @@ void drawOriTri(OrTri t){
 		drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(), 0.5,0,0);
 		//drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 }
+
 void drawTrist(){
 	//contain all drawing code.
 	//get data from global variables trist & psa
@@ -171,22 +174,25 @@ void drawTrist(){
 	{
 		int pi1,pi2, pi3;
 		
-		bool leaf=DenaulayTriangulation.trist.getVertexIdx(i * 8,pi1,pi2,pi3);
-		if(leaf&&pi1>0&&pi2>0&& pi3>0){
-		LongInt x1,y1,x2,y2,x3,y3;
-		DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
-		DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
-		DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+		bool tri = DenaulayTriangulation.trist.getVertexIdx(i * 8, pi1, pi2, pi3);
+		bool leaf = DenaulayTriangulation.trist.isLeaf(i * 8);
+		//????????????????
+		if(tri && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) ){
+			LongInt x1, y1, x2, y2, x3, y3;
+		
+			DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+			DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+			DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
 
-		drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 		
-		////////////////////////////////////////////
-		drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue());
-		drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
-		drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue());
+			////////////////////////////////////////////
+			drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue());
+			drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue());
 		
-		//DEBUG STUFF
-		//drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+			//DEBUG STUFF
+			//drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 
 		}
 		
@@ -196,7 +202,7 @@ void drawTrist(){
 	}
 
 	//for(int i= 1; i<=DenaulayTriangulation.psa.noPt(); i++)
-	for(int i= 1; i<= progress; i++)
+	for(int i= 1; i< progress; i++)
 	{
 		LongInt x,y;
 		DenaulayTriangulation.psa.getPoint(i,x,y);
@@ -208,7 +214,7 @@ void drawTrist(){
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
-/*	for(int i= 1; i<=newInsertedPsa.noPt(); i++)
+	for(int i= 1; i<=newInsertedPsa.noPt(); i++)
 	{
 		LongInt x,y;
 		newInsertedPsa.getPoint(i,x,y);
@@ -218,11 +224,32 @@ void drawTrist(){
 
 		//just for debugging purpose
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
-	}*/
+	}
 
 	drawCircumscribeCircleForTriangle(circumcir1);
 	drawCircumscribeCircleForTriangle(circumcir2);
 	drawCircumscribeCircleForTriangle(circumcir3);
+
+	if(illegalOriTri > -1)	//draw illegal edge
+	{
+		//OrTri neighbour = DenaulayTriangulation.trist.enext(illegalOriTri) ;
+		int pi1,pi2, pi3;
+		bool temp = DenaulayTriangulation.trist.getVertexIdx(illegalOriTri, pi1, pi2, pi3);
+
+		if((pi1 > 0) && (pi2 > 0) && (pi3 > 0))
+		{
+		
+			LongInt x1, y1, x2, y2, x3, y3;
+		
+			DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+			DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+			DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+			drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0.0,0.0);
+		}
+
+
+		//drawOriTri(illegalOriTri);
+	}
 
 	//glutSwapBuffers();
 	
@@ -243,7 +270,6 @@ void setView()
 
 }
 
-
 void display(void)
 {
 
@@ -260,7 +286,6 @@ void display(void)
 	glPopMatrix();
 	glutSwapBuffers ();
 }
-
 
 void reshape (int w, int h)
 {
@@ -329,7 +354,6 @@ void resetView()
 
 }
 
-
 void GetOGLPos(int x, int y, int& wx, int& wy, int& wz)
 {
     GLint viewport[4];
@@ -360,7 +384,31 @@ void init(void)
 	glShadeModel(GL_FLAT);
 }
 
+void legalizeEdge2(OrTri tri)
+{
+	if(! DenaulayTriangulation.checkLegal(tri))
+	{
+		OrTri tri1, tri2;
+		
+		illegalOriTri = tri;
+		display();
+		Sleep(longDelay);
 
+		DenaulayTriangulation.flipEdge(tri,tri1, tri2);
+
+		circumcir1 = tri1;
+		circumcir2 = tri2;
+		circumcir3 = -1;
+
+		display();
+		Sleep(shortDelay);
+		illegalOriTri = -1;
+
+		legalizeEdge2(tri1);
+		legalizeEdge2(tri2);
+	}
+
+}
 
 void insertPoint(int pIndex) {
 		
@@ -385,15 +433,22 @@ void insertPoint(int pIndex) {
 	}
 	else{
 		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3);
-		if(DenaulayTriangulation.trist.noTri()>7){
-		 DenaulayTriangulation.legalizeEdge(tri1);
-		 DenaulayTriangulation.legalizeEdge(tri2);
-		 DenaulayTriangulation.legalizeEdge(tri3);
-		}
 
 		circumcir1 = tri1;
 		circumcir2 = tri2;
 		circumcir3 = tri3;
+		display();
+		Sleep(longDelay);
+
+		legalizeEdge2(tri1);
+		legalizeEdge2(tri2);
+		legalizeEdge2(tri3);
+
+
+		//DenaulayTriangulation.legalizeEdge(tri1);
+		//DenaulayTriangulation.legalizeEdge(tri2);
+		//DenaulayTriangulation.legalizeEdge(tri3);
+
 		
 	}
 
@@ -417,10 +472,8 @@ void delaunayComputation()
 	{
 		
 		insertPoint(progress);
-		if(delay>0)//The delay should be conditional.
-			Sleep(delay*1000);
 		display();
-		
+		//Sleep(delay);
 
 	}
 
@@ -459,7 +512,6 @@ void readFile(){
 		//remove all points and triangles;
 		DenaulayTriangulation.psa.eraseAllPoints();
 		DenaulayTriangulation.trist.delAllTri();
-		delay=-1;
 		progress=1;
 	}
 
@@ -478,10 +530,8 @@ void readFile(){
 		linestream >> line_noStr;
 		linestream >> command;         // get the command
 
-		if(!command.compare("DY")){
-			linestream >> numberStr;
-			delay=atoi(numberStr.c_str());
-		}else if(!command.compare("IP")){
+		
+		if(!command.compare("IP")){
 			linestream >> numberStr;
 			LongInt x(numberStr);
 			linestream >> numberStr;
@@ -491,7 +541,7 @@ void readFile(){
 			}	//if(!command.compare("IP")){
 		else if (!command.compare("CD")){
 			delaunayComputation();
-			
+			display();
 		}		 //else if (!command.compare("CD")){
 		else{
 			cerr << "Exception: Wrong input command" << endl;
@@ -501,9 +551,6 @@ void readFile(){
 	}
 
 }
-
-
-
 
 void writeFile()
 {
@@ -530,8 +577,6 @@ void writeFile()
 
 	outputFile.close();
 }
-
-
 
 void keyboard (unsigned char key, int x, int y)
 {
@@ -613,38 +658,34 @@ void keyboard (unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-
-
 void mouse(int button, int state, int x, int y)//the point and triangles have to be inserted to the trist & psa
 {
 	/*button: GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, or GLUT_RIGHT_BUTTON */
         
 	/*state: GLUT_UP or GLUT_DOWN */
 	enum
-        {
-                MOUSE_LEFT_BUTTON = 0,
-                MOUSE_MIDDLE_BUTTON = 1,
-                MOUSE_RIGHT_BUTTON = 2,
-                MOUSE_SCROLL_UP = 3,
-                MOUSE_SCROLL_DOWN = 4
-        };
+	{
+		MOUSE_LEFT_BUTTON = 0,
+		MOUSE_MIDDLE_BUTTON = 1,
+		MOUSE_RIGHT_BUTTON = 2,
+		MOUSE_SCROLL_UP = 3,
+		MOUSE_SCROLL_DOWN = 4
+	};
 
-        if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
-        {
-                int wx, wy, wz;
-                GetOGLPos(x,y, wx, wy, wz);
-                //int pIndex= DenaulayTriangulation.psa.addPoint(wx,wy);
-                int intri_result = -1;
-                bool outsidePoint = true;
+	if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
+	{
+		int wx, wy, wz;
+		GetOGLPos(x,y, wx, wy, wz);
+		//int pIndex= DenaulayTriangulation.psa.addPoint(wx,wy);
+		int intri_result = -1;
+		bool outsidePoint = true;
 
-                int ipIndex = newInsertedPsa.addPoint(wx,wy);
+		int ipIndex = newInsertedPsa.addPoint(wx,wy);
 
 
-        } //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
+	} //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 
-        glutPostRedisplay();
-       
-
+	glutPostRedisplay();
 }
 
 void generate_test_input(int num, int bound)
@@ -674,7 +715,6 @@ void generate_test_input(int num, int bound)
 
 	outputFile.close();
 }
-
 
 int main(int argc, char **argv)
 {

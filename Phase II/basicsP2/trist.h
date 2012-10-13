@@ -80,6 +80,8 @@ class Trist {
           
           */
 
+		bool isLeaf(OrTri tri);
+
 		OrTri enext(OrTri ef);
 		OrTri sym(OrTri ef);
 		OrTri fnext(OrTri ef);
