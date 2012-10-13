@@ -13,11 +13,11 @@
 #include <iomanip>
 #include <queue>
 
-#include "basicsP2\pointSetArray.h"
-#include "basicsP2\trist.h"
+
 #include "Circle.h"
-#include "glut.h"
-#include "basicsP2\DenaulayTri.h"
+#include "DenaulayTri.h"
+#include "GL\glut.h"
+
 #include <Windows.h>
 
 using namespace std;
@@ -579,11 +579,22 @@ void insertPoint(LongInt x, LongInt y) {
 
 	// If on boundary => delete one triangle and create 3 triangles
 	// else delete 2 triangles and create 4 triangles
+	
 	if(boundary){
-		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));		
+		OrTri tri1, tri2, tri3, tri4;
+		DenaulayTriangulation.insertPoint(point,tri,tri1, tri2, tri3, tri4);
+		triangles.push(tri1);
+		triangles.push(tri2);
+		triangles.push(tri3);
+		triangles.push(tri4);
 	}
 	else{
-		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));
+		OrTri tri1, tri2, tri3;
+		DenaulayTriangulation.insertPoint(point,tri,tri1, tri2, tri3);
+		triangles.push(tri1);
+		triangles.push(tri2);
+		triangles.push(tri3);
+		
 	}
 
 	// Check if the point is locally delaunay. Else keep flipping edges till it is.
