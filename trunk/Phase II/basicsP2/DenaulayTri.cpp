@@ -1,7 +1,7 @@
 #include "DenaulayTri.h"
 int DenaulayTri::inTri(OrTri& tri, int p){
 	int tri_p[3];
-	int	o, edge=-1;
+	int	o, edge = 1;
 	int min=0;
 	
 	trist.getVertexIdx(tri, tri_p[0] , tri_p[1], tri_p[2]);
@@ -61,7 +61,7 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 {
 
 	
-	int intri_result;
+	int intri_result = -1;
 	
 	int  index= 0;
 	
@@ -105,6 +105,7 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 }
 bool DenaulayTri::checkLegal(OrTri tri){
 	OrTri neighbour=trist.fnext(trist.enext(tri));
+	
 	if(neighbour>-1){
 		int p1, p2, p3;
 	    trist.getVertexIdx(tri, p1, p2, p3);
@@ -114,6 +115,18 @@ bool DenaulayTri::checkLegal(OrTri tri){
 	}else{
 		return true;
 	}
+}
+
+void DenaulayTri::legalizeEdge(OrTri tri)
+{
+	if(!checkLegal(tri))
+	{
+		OrTri tri1, tri2;
+		flipEdge(tri,tri1, tri2);
+		legalizeEdge(tri1);
+		legalizeEdge(tri2);
+	}
+
 }
 
 void DenaulayTri::flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2){
@@ -129,6 +142,3 @@ DenaulayTri::DenaulayTri(){
 	trist.makeTri(0, -1, -2);// 0 top; -1 right button; -2 left
 }
 
-int DenaulayTri::addPoint(LongInt& x1,LongInt& y1){
-	return psa.addPoint(x1, y1);
-}

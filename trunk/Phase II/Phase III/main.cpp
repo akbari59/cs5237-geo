@@ -13,11 +13,11 @@
 #include <iomanip>
 #include <queue>
 
-
+#include "basicsP2\pointSetArray.h"
+#include "basicsP2\trist.h"
 #include "Circle.h"
-#include "DenaulayTri.h"
-#include "GL\glut.h"
-
+#include "glut.h"
+#include "basicsP2\DenaulayTri.h"
 #include <Windows.h>
 
 using namespace std;
@@ -56,8 +56,8 @@ PointSetArray notinsidepsa;
 
 DenaulayTri DenaulayTriangulation;
 
-Trist worksetTrist;
-PointSetArray worksetPsa;
+//Trist worksetTrist;
+//PointSetArray worksetPsa;
 
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
@@ -433,10 +433,6 @@ bool CheckIsDelaunay2(OrTri  t)
 //
 //}
 
-bool delaunayComputation()
-{
-	return false;
-}
 
 /*
 bool delaunayComputation2()
@@ -566,7 +562,53 @@ bool delaunayComputation2()
 }
 
 */
+void insertPoint(int pIndex) {
+		
+	OrTri tri;
+	bool boundary;
+	
+	tri= DenaulayTriangulation.findPoint(pIndex,boundary);
 
+	OrTri tri1, tri2, tri3,tri4;
+
+	// If boundary ==false  (not on the boundry)
+	// else delete 2 triangles and create 4 triangles
+
+	if(boundary){
+		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3);
+		DenaulayTriangulation.legalizeEdge(tri1);
+		DenaulayTriangulation.legalizeEdge(tri2);
+		DenaulayTriangulation.legalizeEdge(tri3);
+
+	}
+	else{
+		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3, tri4);
+		DenaulayTriangulation.legalizeEdge(tri1);
+		DenaulayTriangulation.legalizeEdge(tri2);
+		DenaulayTriangulation.legalizeEdge(tri3);
+		DenaulayTriangulation.legalizeEdge(tri4);
+	}
+
+	
+
+}
+
+bool delaunayComputation()
+{
+	LongInt x;
+	LongInt y;
+
+	for(int i= 1; i <= psa.noPt() ; i++)
+	{
+		insertPoint(i);
+
+	}
+
+	return false;
+}
+
+
+/*
 void insertPoint(LongInt x, LongInt y) {
 	
 	int point = psa.addPoint(x,y);
@@ -579,22 +621,11 @@ void insertPoint(LongInt x, LongInt y) {
 
 	// If on boundary => delete one triangle and create 3 triangles
 	// else delete 2 triangles and create 4 triangles
-	
 	if(boundary){
-		OrTri tri1, tri2, tri3, tri4;
-		DenaulayTriangulation.insertPoint(point,tri,tri1, tri2, tri3, tri4);
-		triangles.push(tri1);
-		triangles.push(tri2);
-		triangles.push(tri3);
-		triangles.push(tri4);
+		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));		
 	}
 	else{
-		OrTri tri1, tri2, tri3;
-		DenaulayTriangulation.insertPoint(point,tri,tri1, tri2, tri3);
-		triangles.push(tri1);
-		triangles.push(tri2);
-		triangles.push(tri3);
-		
+		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));
 	}
 
 	// Check if the point is locally delaunay. Else keep flipping edges till it is.
@@ -611,7 +642,7 @@ void insertPoint(LongInt x, LongInt y) {
 	}
 
 }
-
+*/
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 

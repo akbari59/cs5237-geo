@@ -8,6 +8,8 @@ class DenaulayTri{
 public:
 	Trist trist;
 	PointSetArray psa;
+	
+	
 	DenaulayTri();
 	int inTri(OrTri& tri, int p);
 	OrTri findPoint(int pIndex, bool& boundary);
@@ -15,7 +17,7 @@ public:
 	void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3);//
 	void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4);// 
 	bool checkLegal(OrTri tri);
-	int addPoint(LongInt& x1,LongInt& y1); 
+	void legalizeEdge(OrTri tri);
 };
 
 
