@@ -63,6 +63,8 @@ PointSetArray newInsertedPsa;
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
 
+bool showAnimatiion = true;
+
 
 void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 0, float opaque = 0)
 {
@@ -134,11 +136,14 @@ void drawCircumscribeCircleForTriangle(OrTri t)
 		DenaulayTriangulation.trist.getVertexIdx(t,tmppi1,tmppi2,tmppi3);
 		LongInt x1,y1,x2,y2,x3,y3;
 		
-		DenaulayTriangulation.psa.getPoint(tmppi1,x1,y1);
-		DenaulayTriangulation.psa.getPoint(tmppi2,x2,y2);
-		DenaulayTriangulation.psa.getPoint(tmppi3,x3,y3);
-
-		drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+		if((tmppi1 > 0)  && (tmppi2> 0) && (tmppi3>0))
+		{
+			DenaulayTriangulation.psa.getPoint(tmppi1,x1,y1);
+			DenaulayTriangulation.psa.getPoint(tmppi2,x2,y2);
+			DenaulayTriangulation.psa.getPoint(tmppi3,x3,y3);
+			
+			drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+		}
 
 }
 void drawOriTri(OrTri t){
@@ -177,14 +182,19 @@ void drawTrist(){
 		drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue());
 		drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
 		drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue());
+		
+		//DEBUG STUFF
+		//drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+
 		}
-//		drawCircle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue());
+		
 
 		//DEBUG STUFF
 		//cout<<"triangle at->"<<x1.doubleValue()<< " "<< y1.doubleValue()<< " "<< x2.doubleValue() << " " <<y2.doubleValue() << " " <<x3.doubleValue()<< " "<<y3.doubleValue()<< endl;
 	}
 
-	for(int i= 1; i<=DenaulayTriangulation.psa.noPt(); i++)
+	//for(int i= 1; i<=DenaulayTriangulation.psa.noPt(); i++)
+	for(int i= 1; i< progress; i++)
 	{
 		LongInt x,y;
 		DenaulayTriangulation.psa.getPoint(i,x,y);
@@ -208,15 +218,11 @@ void drawTrist(){
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
-	/*drawCircumscribeCircleForTriangle(circumcir1);
+	drawCircumscribeCircleForTriangle(circumcir1);
 	drawCircumscribeCircleForTriangle(circumcir2);
-	drawCircumscribeCircleForTriangle(circumcir3);*/
+	drawCircumscribeCircleForTriangle(circumcir3);
 
 	//glutSwapBuffers();
-	
-	/*drawOriTri(tempOriTri1);
-	drawOriTri(tempOriTri2);
-	drawOriTri(tempOriTri3);*/
 	
 	
 	
@@ -321,20 +327,6 @@ void resetView()
 
 }
 
-/*
-void zoom (double rate)
-{
-
-	
-	width = width * rate;
-	height = height * rate;
-
-	 reshape (width , height );
-
-	
-
-}
-*/
 
 void GetOGLPos(int x, int y, int& wx, int& wy, int& wz)
 {
@@ -366,206 +358,8 @@ void init(void)
 	glShadeModel(GL_FLAT);
 }
 
-//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-//should be optimized
-OrTri getCicumscribeTri(int p)
-{
-
-	OrTri result = -1;
-	int intri_result;
-	int isLeaf = 0;
-	OrTri orindex= 0;
-	
-
-	for(int i=0; i<DenaulayTriangulation.trist.noTri() ;i++)
-	{
-		int p1, p2, p3;
-		OrTri orindex= i<<3;
-		DenaulayTriangulation.trist.getVertexIdx(orindex, p1, p2, p3);
-		if(p1!=-1){
-		intri_result=DenaulayTriangulation.psa.inTri(p1, p2, p3, p);
-		if (intri_result != -1) return orindex;
-		}
-	}
-
-	cout<< "EROORRR";
-	
-	return result;
-
-}
-//should be optimized
-
-/*
-bool CheckIsDelaunay(OrTri  t, int lastpoint, OrTri&  n)
-{
-		int p1, p2, p3;
-		OrTri orindex= t;
-		trist.getVertexIdx(orindex, p1, p2, p3);
-		for(int i=1; i<=lastpoint;i++)
-		{
-			if ((i == p1) || (i==p2) || (i == p3)) continue;
-			if ( psa.inCircle2(p1,p2,p3,i) == 1)
-			{
-
-				return false;
-			}
-		}
-		return true;
-
-}
-*/
-/*
-bool CheckIsDelaunay2(OrTri  t)
-{
-	OrTri  neighborhood;
-	neighborhood = trist.fnext(t);
-	drawOriTri(neighborhood);
-	Sleep(2000);
-	return true;
-
-}
-
-*/
-//bool CheckIsDelaunay(OrTri  t, int p)
-//{
-//		int p1, p2, p3;
-//		OrTri orindex= t<<3;
-//		trist.getVertexIdx(orindex, p1, p2, p3);
-//		if ( psa.inCircle2(p1,p2,p3,p) != 1)
-//			return true;
-//		return false;
-//
-//}
 
 
-/*
-bool delaunayComputation2()
-{
-	//if (psa.noPt() < 3) return false;	// nothing to handle
-
-	// Determine the bounding box.
-	LongInt xMin, yMin;
-
-	int res = psa.getPoint(1, xMin, yMin);
-
-	LongInt xMax = xMin;
-	LongInt yMax = yMin;
-
-	LongInt x;
-	LongInt y;
-
-	for(int i=1; i <= psa.noPt() ;i++)
-	{
-		res = psa.getPoint(i, x, y);
-		if(x < xMin) xMin = x;
-		if(y < yMin) yMin = y;
-		
-		if(x > xMax) xMax = x;
-		if(y > yMax) yMax = y;
-	}
-
-	LongInt dx = xMax - xMin;
-	LongInt dy = yMax - yMin;
-
-
-	// Make the bounding box slightly bigger, just to feel safe.
-	LongInt ddx = dx + 50;
-	LongInt ddy = dy + 50;
-
-	//LongInt temp = 2;
-
-	//xMin = xMin - ddx;
-	//xMax = xMax + ddx;
-	//dx = dx + temp * ddx;
-
-	//yMin = yMin - ddy;
-	//yMax = yMax + ddy;
-	//dy = dy + temp * ddy;
-
-	//// Create a 'super triangle', encompassing all the vertices. We choose an equilateral triangle with horizontal base.
-	//// We could have made the 'super triangle' simply very big. However, the algorithm is quite sensitive to
-	//// rounding errors, so it's better to make the 'super triangle' just big enough, like we do here.
-
-	//int p1 = psa.addPoint(xMin - dy * (sqrt3 / 3.0F) , yMin );
-	//int p2 = psa.addPoint(xMax + dy * (sqrt3 / 3.0F) , yMin );
-	//int p3 = psa.addPoint((xMin + xMax) * 0.5 , yMax + dx * sqrt3 * 0.5 );
-
-	LongInt M;
-	if(dx > dy ) M = dx; else M = dy; 
-	LongInt temp = 3;
-	
-	int p1 = psa.addPoint(temp * M, 0);
-	int p2 = psa.addPoint(0, temp * M);
-	int p3 = psa.addPoint(- temp * M, -temp * M);
-
-
-	trist.makeTri(p1,p2,p3);
-	
-	
-	
-//	width = xMax.doubleValue() - xMin.doubleValue();
-//	height = yMax.doubleValue() - yMin.doubleValue();
-
-	display();
-	
-		
-	for(int i= 1; i <= psa.noPt()-3 ; i++)
-	{
-
-		//OrTri orindex = getCicumscribeTri(i);
-		bool boundry;
-		OrTri orindex = trist.findPoint(i,boundry,psa);;
-		cout << "CicumscribeTri for point" << i <<"is  " << orindex << endl;
-		
-		int a, b, c;
-		trist.getVertexIdx(orindex, a, b, c);
-
-		
-		OrTri t1, t2, t3; 
-		trist.insertPoint(i,orindex,t1, t2, t3);
-		
-
-		circumcir1 = t1;
-		circumcir2 = t2;
-		circumcir3 = t3;
-		
-		display();
-		Sleep(100);
-		
-			
-		//MOST IMPORTANT PART
-		//SHOULD IMPLEMENT AN TREEEEEEEEEEEEEEEEE
-
-		//CheckIsDelaunay2(t1);
-		tempOriTri1 = trist.fnext(t1);
-		tempOriTri2 = trist.fnext(trist.enext(t1));
-		tempOriTri3 = trist.fnext(trist.enext(trist.enext(t1)));
-		Sleep(2000);
-
-		if(!CheckIsDelaunay(t1, c, i)  ){
-			cout << "t1 is not delaunt" << endl;
-
-					
-		}
-		if(!CheckIsDelaunay(t2, a, i)){
-			cout << "t2 is not delaunt" << endl;
-		
-		}
-		if(!CheckIsDelaunay(t3, b, i)){
-			cout << "t3 is not delaunt" << endl;
-		
-		}
-
-	
-
-
-	}
-			
-	return false;
-
-}
-
-*/
 void insertPoint(int pIndex) {
 		
 	OrTri tri;
@@ -592,6 +386,10 @@ void insertPoint(int pIndex) {
 		DenaulayTriangulation.legalizeEdge(tri1);
 		DenaulayTriangulation.legalizeEdge(tri2);
 		DenaulayTriangulation.legalizeEdge(tri3);
+
+		circumcir1 = tri1;
+		circumcir2 = tri2;
+		circumcir3 = tri3;
 		
 	}
 
@@ -615,7 +413,8 @@ void delaunayComputation()
 	{
 		
 		insertPoint(progress);
-		//display();
+		display();
+		Sleep(1000);
 
 	}
 
@@ -628,43 +427,6 @@ void delaunayComputation()
 	
 }
 
-
-/*
-void insertPoint(LongInt x, LongInt y) {
-	
-	int point = psa.addPoint(x,y);
-	bool boundary,legal;
-	OrTri tri,testTri;
-	queue<OrTri> triangles;
-
-	// locate the triangle which contains this point. See if it lies on a boundary
-	tri = DenaulayTriangulation.findPoint(point,boundary);
-
-	// If on boundary => delete one triangle and create 3 triangles
-	// else delete 2 triangles and create 4 triangles
-	if(boundary){
-		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));		
-	}
-	else{
-		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));
-	}
-
-	// Check if the point is locally delaunay. Else keep flipping edges till it is.
-	while(!triangles.empty()) {
-		testTri = triangles.front();
-		legal = DenaulayTriangulation.checkLegal(testTri);
-		
-		// not LD => flip edge
-		if(!legal){
-			//DenaulayTriangle.flipEdge(testTri,triangles.push(new OrTri()),triangles.push(new OrTri()));
-		}
-
-		triangles.pop();
-	}
-
-}
-*/
-//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 
@@ -868,40 +630,7 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 
 		int ipIndex = newInsertedPsa.addPoint(wx,wy);
 
-	 //   for(int i=0; i<DenaulayTriangulation.trist.noTri() && (intri_result == -1 );i++){
-		//		int p1, p2, p3;
-		//		OrTri orindex= i<<3;
-		//		DenaulayTriangulation.trist.getVertexIdx(orindex, p1, p2, p3);
-		//		if(p1!=-1){
-		//		 intri_result=DenaulayTriangulation.psa.inTri(p1, p2, p3, pIndex);
-		//		 switch (intri_result)
-		//		 {
-		//		 case 1:
 
-		//			 DenaulayTriangulation.trist.delTri(orindex);
-		//			 DenaulayTriangulation.trist.makeTri(pIndex,p2,p3);
-		//			 DenaulayTriangulation.trist.makeTri(p1,pIndex,p3);
-		//			 DenaulayTriangulation.trist.makeTri(p1,p2,pIndex);
-		//			 outsidePoint = false;
-		//			 break;
-		//		 case 0:
-		//			 cout << "degenerate case" << endl;
-		//			 DenaulayTriangulation.psa.removePoint(pIndex);
-		//			 outsidePoint = false;
-		//			 //int pIndex2=notinsidepsa.addPoint(wx,wy);
-		//			 break;
-		//		 
-		//		 }//switch
-		//		} //if
-		//		
-		//	} // for
-		///*if(outsidePoint == true)
-		//{
-		//	//cout << "you have clicked outside any triangle. point was discarded." << endl;
-		//	psa.removePoint(pIndex);
-		//	int pIndex2=notinsidepsa.addPoint(wx,wy);
-		//	
-		//}*/
 	} //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 
 	glutPostRedisplay();
