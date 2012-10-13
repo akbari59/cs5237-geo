@@ -16,7 +16,8 @@
 #include "basicsP2\pointSetArray.h"
 #include "basicsP2\trist.h"
 #include "Circle.h"
-#include "GL\glut.h"
+#include "glut.h"
+#include "basicsP2\DenaulayTri.h"
 #include <Windows.h>
 
 using namespace std;
@@ -52,6 +53,8 @@ bool file_loaded = false;
 Trist trist;
 PointSetArray psa;
 PointSetArray notinsidepsa;
+
+DenaulayTri DenaulayTriangulation;
 
 Trist worksetTrist;
 PointSetArray worksetPsa;
@@ -368,8 +371,7 @@ OrTri getCicumscribeTri(int p)
 	int intri_result;
 	int isLeaf = 0;
 	OrTri orindex= 0;
-	int p1, p2, p3;
-
+	
 
 	for(int i=0; i<trist.noTri() ;i++)
 	{
@@ -389,6 +391,7 @@ OrTri getCicumscribeTri(int p)
 }
 //should be optimized
 
+/*
 bool CheckIsDelaunay(OrTri  t, int lastpoint, OrTri&  n)
 {
 		int p1, p2, p3;
@@ -406,7 +409,8 @@ bool CheckIsDelaunay(OrTri  t, int lastpoint, OrTri&  n)
 		return true;
 
 }
-
+*/
+/*
 bool CheckIsDelaunay2(OrTri  t)
 {
 	OrTri  neighborhood;
@@ -417,7 +421,7 @@ bool CheckIsDelaunay2(OrTri  t)
 
 }
 
-
+*/
 //bool CheckIsDelaunay(OrTri  t, int p)
 //{
 //		int p1, p2, p3;
@@ -429,13 +433,13 @@ bool CheckIsDelaunay2(OrTri  t)
 //
 //}
 
-bool flipEdge(OrTri t, int p1, int p2)
+bool delaunayComputation()
 {
-
 	return false;
 }
 
-bool delaunayComputation()
+/*
+bool delaunayComputation2()
 {
 	//if (psa.noPt() < 3) return false;	// nothing to handle
 
@@ -537,7 +541,7 @@ bool delaunayComputation()
 		tempOriTri2 = trist.fnext(trist.enext(t1));
 		tempOriTri3 = trist.fnext(trist.enext(trist.enext(t1)));
 		Sleep(2000);
-/*
+
 		if(!CheckIsDelaunay(t1, c, i)  ){
 			cout << "t1 is not delaunt" << endl;
 
@@ -552,7 +556,7 @@ bool delaunayComputation()
 		
 		}
 
-*/	
+	
 
 
 	}
@@ -560,6 +564,8 @@ bool delaunayComputation()
 	return false;
 
 }
+
+*/
 
 void insertPoint(LongInt x, LongInt y) {
 	
@@ -569,25 +575,25 @@ void insertPoint(LongInt x, LongInt y) {
 	queue<OrTri> triangles;
 
 	// locate the triangle which contains this point. See if it lies on a boundary
-	tri = DenaulayTri.findPoint(point,boundary);
+	tri = DenaulayTriangulation.findPoint(point,boundary);
 
 	// If on boundary => delete one triangle and create 3 triangles
 	// else delete 2 triangles and create 4 triangles
 	if(boundary){
-		DenaulayTri.insertPoint(point,tri,triangles.push(new Ortri()),triangles.push(new Ortri()),triangles.push(new Ortri()));		
+		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));		
 	}
 	else{
-		DenaulayTri.insertPoint(point,tri,triangles.push(new Ortri()),triangles.push(new Ortri()),triangles.push(new Ortri()),triangles.push(new Ortri()));
+		DenaulayTriangulation.insertPoint(point,tri,triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()),triangles.push(new OrTri()));
 	}
 
 	// Check if the point is locally delaunay. Else keep flipping edges till it is.
 	while(!triangles.empty()) {
 		testTri = triangles.front();
-		legal = DenaulayTri.checkLegal(testTri);
+		legal = DenaulayTriangulation.checkLegal(testTri);
 		
 		// not LD => flip edge
 		if(!legal){
-			DenaulayTri.flipEdge(testTri,triangles.push(new Ortri()),triangles.push(new Ortri()));
+			//DenaulayTriangle.flipEdge(testTri,triangles.push(new OrTri()),triangles.push(new OrTri()));
 		}
 
 		triangles.pop();
@@ -607,7 +613,7 @@ void readFile(){
 	string line;   // each line of the file
 	string command;// the command of each line
 	string numberStr; // for single LongInt operation
-	string outputAns = "Answer of your computation"; // the answer you computed
+	
 	int delay=-1;
 	ifstream inputFile("input.txt",ios::in);
 
@@ -639,65 +645,18 @@ void readFile(){
 		linestream >> line_noStr;
 		linestream >> command;         // get the command
 
-		if(!command.compare("AP")){
-			linestream >> numberStr;
-			LongInt x(numberStr);
-			linestream >> numberStr;
-		    LongInt y(numberStr);
-			psa.addPoint(x,y);
-			
-		}
-		else if(!command.compare("OT")){
-			linestream >> numberStr;
-			int p1=atoi(numberStr.c_str());
-			linestream >> numberStr;
-			int p2=atoi(numberStr.c_str());
-			linestream >> numberStr;
-			int p3=atoi(numberStr.c_str());
-			trist.makeTri(p1,p2,p3);
-			if(delay>0){
-				Sleep(delay*1000);
-				display();
-			}
-			//drawTrist();
-		} 
-		else if(!command.compare("IP")){
+		
+		if(!command.compare("IP")){
 			linestream >> numberStr;
 			LongInt x(numberStr);
 			linestream >> numberStr;
 			LongInt y(numberStr);
 			int pIndex=psa.addPoint(x,y);
-			//remember to remove the triangle from the trist;
-			for(int i=0; i<trist.noTri();i++){
-				int p1, p2, p3;
-				OrTri orindex= i<<3;
-				trist.getVertexIdx(orindex, p1, p2, p3);
-				if(p1!=-1){
-				 int intri_result=psa.inTri(p1, p2, p3, pIndex);
-				 if(intri_result==1){
-					trist.delTri(orindex);
-					trist.makeTri(pIndex,p2,p3);
-					trist.makeTri(p1,pIndex,p3);
-					trist.makeTri(p1,p2,pIndex);
-					if(delay>0){
-				       Sleep(delay*1000);
-				       display();
-			        }
-					break;
-				 }
-				}
 				
-			}
-
-		}
-		else if(!command.compare("DY")){
-			linestream >> numberStr;
-			delay=atoi(numberStr.c_str());
-			if(delay>0)
-				Sleep(delay * 1000);
-		} else if (!command.compare("CD")){
+			}	//if(!command.compare("IP")){
+		else if (!command.compare("CD")){
 			delaunayComputation();
-		}
+		}		 //else if (!command.compare("CD")){
 		else{
 			cerr << "Exception: Wrong input command" << endl;
 		}
