@@ -55,6 +55,7 @@ bool file_loaded = false;
 PointSetArray notinsidepsa;*/
 int progress=1;
 int last_pIndex;
+int delay;
 DenaulayTri DenaulayTriangulation;
 
 //Trist worksetTrist;
@@ -607,7 +608,9 @@ void delaunayComputation()
 	{
 		
 		insertPoint(progress);
-
+		if(delay>0)
+				Sleep(delay*1000);
+		display();
 	}
 
 	
@@ -657,12 +660,12 @@ void insertPoint(LongInt x, LongInt y) {
 void readFile(){
 
 	string line_noStr;
-
+	delay=0;
 	string line;   // each line of the file
 	string command;// the command of each line
 	string numberStr; // for single LongInt operation
 	
-	int delay=-1;
+	
 	ifstream inputFile("input.txt",ios::in);
 
 
@@ -693,18 +696,22 @@ void readFile(){
 
 		linestream >> line_noStr;
 		linestream >> command;         // get the command
-
-		
-		if(!command.compare("IP")){
+		if(!command.compare("DY")){
+		  linestream >> numberStr;
+		  delay=atoi(numberStr.c_str());
+		}else if(!command.compare("IP")){
 			linestream >> numberStr;
 			LongInt x(numberStr);
 			linestream >> numberStr;
 			LongInt y(numberStr);
 			last_pIndex=DenaulayTriangulation.psa.addPoint(x,y);
-				
+			if(delay>0)
+				Sleep(delay*1000);
+			 display();
 			}	//if(!command.compare("IP")){
 		else if (!command.compare("CD")){
 			delaunayComputation();
+			
 			display();
 		}		 //else if (!command.compare("CD")){
 		else{
