@@ -184,7 +184,40 @@ int PointSet::p0InTri( int p2Idx, int p3Idx, int pIdx, int& edge){
 	return side;
 }
 
-
+/*int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx, int& edge){
+	array<LongInt, 2> p1=set[p1Idx-1];
+	array<LongInt, 2> p2=set[p2Idx-1];
+	array<LongInt, 2> p3=set[p3Idx-1];
+	array<LongInt, 2> p=set[pIdx-1];
+	int correctside=getside(p1,p2,p3);
+	
+	int side=getside(p1,p2,p);
+	bool onBoundary=false;
+	if(side==0){
+		edge=0;
+		onBoundary=true;
+	}else if(correctside!=side){
+		return -1;
+	}
+	side=getside(p2,p3,p);
+	if(side==0){
+		edge=1;
+		onBoundary=true;
+	}else if(correctside!=side){
+		return -1;
+	}
+	side=getside(p3,p1,p);
+	if(side==0){
+		edge=2;
+		onBoundary=true;
+	}else if(correctside!=side){
+		return -1;
+	}
+	if(onBoundary)
+		return 0;
+	else
+		return 1;
+}*/
 
 
 
@@ -207,10 +240,7 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx, int& edge){
 	array<LongInt, 2> v0={p2[0]-p1[0],p2[1]-p1[1]};
 	array<LongInt, 2> v1={p3[0]-p1[0],p3[1]-p1[1]};
 	array<LongInt, 2> v={p[0]-p1[0],p[1]-p1[1]};
-	/*cout<<"v1[0]:"<<endl<<v1[0]<<endl;
-	cout<<"v1[1]:"<<endl<<v1[1]<<endl;
-	cout<<"v[0]:"<<endl<<v[0]<<endl;
-	cout<<"v[1]:"<<endl<<v[1]<<endl;*/
+	
 	
 	
 	LongInt dot00=inner_product(v0.begin(), v0.end(), v0.begin(), l0);
@@ -219,22 +249,17 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx, int& edge){
 	LongInt dot11=inner_product(v1.begin(), v1.end(), v1.begin(), l0);
 	LongInt dot1v=inner_product(v1.begin(), v1.end(), v.begin(), l0);
 	
-	/*cout<<"dot00:"<<endl<<dot00<<endl;
-	cout<<"dot01:"<<endl<<dot01<<endl;
-	cout<<"dot0v:"<<endl<<dot0v<<endl;
-	cout<<"dot11:"<<endl<<dot11<<endl;
-	cout<<"dot1v:"<<endl<<dot1v<<endl;*/
+	
 	
 	LongInt denom=dot00 * dot11 - dot01 * dot01;
 
-	//cout<<"denom:"<<endl<<denom<<endl;
+	
 
 	
 	LongInt u = dot11 * dot0v - dot01 * dot1v;
 	LongInt w = dot00 * dot1v - dot01 * dot0v;
 
-	//cout<<u<<endl;
-	//cout<<w<<endl;
+	
 
 	int denomsign=denom.sign();
 	int usign=u.sign();

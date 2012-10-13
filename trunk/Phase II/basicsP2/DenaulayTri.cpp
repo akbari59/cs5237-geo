@@ -10,7 +10,7 @@ int DenaulayTri::inTri(OrTri& tri, int p){
 	if(tri_p[min]>tri_p[2])
 	    min=2;
 	if(tri_p[min]>0){
-		o=psa.inTri(tri_p[0],tri_p[1],tri_p[2],edge);
+		o=psa.inTri(tri_p[0],tri_p[1],tri_p[2], p,edge);
 		if(o==0)
 		 for (;edge>0;edge--)
 			tri=trist.enext(tri);
