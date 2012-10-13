@@ -1,7 +1,7 @@
 #include "DenaulayTri.h"
 int DenaulayTri::inTri(OrTri& tri, int p){
 	int tri_p[3];
-	int	o, edge;
+	int	o, edge=-1;
 	int min=0;
 	
 	trist.getVertexIdx(tri, tri_p[0] , tri_p[1], tri_p[2]);
@@ -127,4 +127,8 @@ void DenaulayTri::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, O
 }
 DenaulayTri::DenaulayTri(){
 	trist.makeTri(0, -1, -2);// 0 top; -1 right button; -2 left
+}
+
+int DenaulayTri::addPoint(LongInt& x1,LongInt& y1){
+	return psa.addPoint(x1, y1);
 }
