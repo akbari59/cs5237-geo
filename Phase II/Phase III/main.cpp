@@ -13,11 +13,11 @@
 #include <iomanip>
 #include <queue>
 
-#include "basicsP2\pointSetArray.h"
-#include "basicsP2\trist.h"
+#include "pointSetArray.h"
+#include "trist.h"
 #include "Circle.h"
-#include "glut.h"
-#include "basicsP2\DenaulayTri.h"
+#include "GL\glut.h"
+#include "DenaulayTri.h"
 #include <Windows.h>
 
 using namespace std;
@@ -55,10 +55,12 @@ bool file_loaded = false;
 PointSetArray notinsidepsa;*/
 int progress=1;
 int last_pIndex;
+int delay;
+PointSetArray newInsertedPsa;
 DenaulayTri DenaulayTriangulation;
 
 //Trist worksetTrist;
-PointSetArray newInsertedPsa;
+//PointSetArray newInsertedPsa;
 
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
@@ -194,7 +196,7 @@ void drawTrist(){
 	}
 
 	//for(int i= 1; i<=DenaulayTriangulation.psa.noPt(); i++)
-	for(int i= 1; i< progress; i++)
+	for(int i= 1; i<= progress; i++)
 	{
 		LongInt x,y;
 		DenaulayTriangulation.psa.getPoint(i,x,y);
@@ -206,7 +208,7 @@ void drawTrist(){
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
-	for(int i= 1; i<=newInsertedPsa.noPt(); i++)
+/*	for(int i= 1; i<=newInsertedPsa.noPt(); i++)
 	{
 		LongInt x,y;
 		newInsertedPsa.getPoint(i,x,y);
@@ -216,7 +218,7 @@ void drawTrist(){
 
 		//just for debugging purpose
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
-	}
+	}*/
 
 	drawCircumscribeCircleForTriangle(circumcir1);
 	drawCircumscribeCircleForTriangle(circumcir2);
@@ -383,9 +385,11 @@ void insertPoint(int pIndex) {
 	}
 	else{
 		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3);
-		DenaulayTriangulation.legalizeEdge(tri1);
-		DenaulayTriangulation.legalizeEdge(tri2);
-		DenaulayTriangulation.legalizeEdge(tri3);
+		if(DenaulayTriangulation.trist.noTri()>7){
+		 DenaulayTriangulation.legalizeEdge(tri1);
+		 DenaulayTriangulation.legalizeEdge(tri2);
+		 DenaulayTriangulation.legalizeEdge(tri3);
+		}
 
 		circumcir1 = tri1;
 		circumcir2 = tri2;
@@ -413,8 +417,10 @@ void delaunayComputation()
 	{
 		
 		insertPoint(progress);
+		if(delay>0)//The delay should be conditional.
+			Sleep(delay*1000);
 		display();
-		Sleep(1000);
+		
 
 	}
 
@@ -453,6 +459,7 @@ void readFile(){
 		//remove all points and triangles;
 		DenaulayTriangulation.psa.eraseAllPoints();
 		DenaulayTriangulation.trist.delAllTri();
+		delay=-1;
 		progress=1;
 	}
 
@@ -471,8 +478,10 @@ void readFile(){
 		linestream >> line_noStr;
 		linestream >> command;         // get the command
 
-		
-		if(!command.compare("IP")){
+		if(!command.compare("DY")){
+			linestream >> numberStr;
+			delay=atoi(numberStr.c_str());
+		}else if(!command.compare("IP")){
 			linestream >> numberStr;
 			LongInt x(numberStr);
 			linestream >> numberStr;
@@ -482,7 +491,7 @@ void readFile(){
 			}	//if(!command.compare("IP")){
 		else if (!command.compare("CD")){
 			delaunayComputation();
-			display();
+			
 		}		 //else if (!command.compare("CD")){
 		else{
 			cerr << "Exception: Wrong input command" << endl;
@@ -512,7 +521,7 @@ void writeFile()
 		DenaulayTriangulation.psa.getPoint(i,x,y);
 		double dx = x.doubleValue();
 		double dy = y.doubleValue();
-		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": AP " << dx << " " << dy << endl;
+		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": IP " << dx << " " << dy << endl;
 		instCount++;
 	}
 
@@ -612,28 +621,30 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
         
 	/*state: GLUT_UP or GLUT_DOWN */
 	enum
-	{
-		MOUSE_LEFT_BUTTON = 0,
-		MOUSE_MIDDLE_BUTTON = 1,
-		MOUSE_RIGHT_BUTTON = 2,
-		MOUSE_SCROLL_UP = 3,
-		MOUSE_SCROLL_DOWN = 4
-	};
+        {
+                MOUSE_LEFT_BUTTON = 0,
+                MOUSE_MIDDLE_BUTTON = 1,
+                MOUSE_RIGHT_BUTTON = 2,
+                MOUSE_SCROLL_UP = 3,
+                MOUSE_SCROLL_DOWN = 4
+        };
 
-	if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
-	{
-		int wx, wy, wz;
-		GetOGLPos(x,y, wx, wy, wz);
-		//int pIndex= DenaulayTriangulation.psa.addPoint(wx,wy);
-		int intri_result = -1;
-		bool outsidePoint = true;
+        if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
+        {
+                int wx, wy, wz;
+                GetOGLPos(x,y, wx, wy, wz);
+                //int pIndex= DenaulayTriangulation.psa.addPoint(wx,wy);
+                int intri_result = -1;
+                bool outsidePoint = true;
 
-		int ipIndex = newInsertedPsa.addPoint(wx,wy);
+                int ipIndex = newInsertedPsa.addPoint(wx,wy);
 
 
-	} //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
+        } //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
 
-	glutPostRedisplay();
+        glutPostRedisplay();
+       
+
 }
 
 void generate_test_input(int num, int bound)
