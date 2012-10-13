@@ -5,9 +5,9 @@ int DenaulayTri::inTri(OrTri& tri, int p){
 	int min=0;
 	
 	trist.getVertexIdx(tri, tri_p[0] , tri_p[1], tri_p[2]);
-	if(tri_p[min]<tri_p[1])
+	if(tri_p[min]>tri_p[1])
 		min=1;
-	if(tri_p[min]<tri_p[2])
+	if(tri_p[min]>tri_p[2])
 	    min=2;
 	if(tri_p[min]>0){
 		o=psa.inTri(tri_p[0],tri_p[1],tri_p[2],edge);
@@ -84,7 +84,7 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 			if(intri_result >=0)
 			{
 				triRec = trist.triangles[ot>>3];
-
+				break;
 			}/* The edge may have been destroyed, if the triangle is not a leaf.
 			else if(intri_result == 0)	// is on the boundry
 			{
@@ -100,6 +100,8 @@ OrTri DenaulayTri::findPoint(int p, bool& boundary)
 	}
 	if(intri_result==0)
 		boundary=true;
+	else
+		boundary=false;
 	return ot;
 
 }
