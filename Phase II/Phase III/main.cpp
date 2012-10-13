@@ -90,7 +90,7 @@ void drawALine(double x1,double y1, double x2, double y2)
 		glPointSize(1);
 }
 
-void drawATriangle(double x1,double y1, double x2, double y2, double x3, double y3, float red = 0, float green = 0, float blue = 0, float opaque = 0)
+void drawATriangle(double x1,double y1, double x2, double y2, double x3, double y3, float red = 0, float green = 0.5, float blue = 0, float opaque = 0)
 {
 		glBegin(GL_POLYGON);
 		//glColor3f(0,0.5,0);
@@ -164,8 +164,8 @@ void drawTrist(){
 	{
 		int pi1,pi2, pi3;
 		
-		DenaulayTriangulation.trist.getVertexIdx(i * 8,pi1,pi2,pi3);
-		if(pi1>0&&pi2>0&& pi3>0){
+		bool leaf=DenaulayTriangulation.trist.getVertexIdx(i * 8,pi1,pi2,pi3);
+		if(leaf&&pi1>0&&pi2>0&& pi3>0){
 		LongInt x1,y1,x2,y2,x3,y3;
 		DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
 		DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
