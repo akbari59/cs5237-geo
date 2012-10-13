@@ -60,14 +60,14 @@ DenaulayTri DenaulayTriangulation;
 //Trist worksetTrist;
 PointSetArray newInsertedPsa;
 
-int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1;
+int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1, circumcir4 = -1;
 OrTri illegalOriTri= -1;
 
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
 
 bool showAnimatiion = true;
 
-int longDelay = 3000;
+int longDelay = 1200;
 int shortDelay = longDelay / 2;
 
 
@@ -229,6 +229,7 @@ void drawTrist(){
 	drawCircumscribeCircleForTriangle(circumcir1);
 	drawCircumscribeCircleForTriangle(circumcir2);
 	drawCircumscribeCircleForTriangle(circumcir3);
+	drawCircumscribeCircleForTriangle(circumcir4);
 
 	if(illegalOriTri > -1)	//draw illegal edge
 	{
@@ -396,13 +397,19 @@ void legalizeEdge2(OrTri tri)
 
 		DenaulayTriangulation.flipEdge(tri,tri1, tri2);
 
-		circumcir1 = tri1;
-		circumcir2 = tri2;
-		circumcir3 = -1;
 
 		display();
 		Sleep(shortDelay);
 		illegalOriTri = -1;
+
+		circumcir1 = tri1;
+		circumcir2 = tri2;
+		circumcir3 = -1;
+		circumcir4 = -1;
+		display();
+		Sleep(shortDelay);
+
+
 
 		legalizeEdge2(tri1);
 		legalizeEdge2(tri2);
@@ -424,6 +431,14 @@ void insertPoint(int pIndex) {
 
 	if(boundary){
 		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3, tri4);
+
+		circumcir1 = tri1;
+		circumcir2 = tri2;
+		circumcir3 = tri3;
+		circumcir4 = tri4;
+		display();
+		Sleep(longDelay);
+
 		DenaulayTriangulation.legalizeEdge(tri1);
 		DenaulayTriangulation.legalizeEdge(tri2);
 		DenaulayTriangulation.legalizeEdge(tri3);
@@ -476,6 +491,12 @@ void delaunayComputation()
 		//Sleep(delay);
 
 	}
+
+	circumcir1 = -1;
+	circumcir2 = -1;
+	circumcir3 = -1;
+	circumcir4 = -1;
+	illegalOriTri = -1;
 
 	GetLocalTime(&st);
 	int end = (((st.wHour*60+st.wMinute)*60)+st.wSecond)*1000+st.wMilliseconds;
