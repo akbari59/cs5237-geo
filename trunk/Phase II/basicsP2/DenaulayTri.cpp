@@ -25,7 +25,7 @@ int DenaulayTri::inTri(OrTri& tri, int p){
 			tri=trist.enext(trist.sym(tri));
 			int temp=tri_p[1];
 			tri_p[1]=tri_p[2];
-			tri_p[2]=tri_p[1];
+			tri_p[2]=temp;
 		}
 		if(tri_p[2]<1)
 			return 1;

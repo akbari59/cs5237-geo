@@ -84,7 +84,7 @@ class Trist {
 		OrTri sym(OrTri ef);
 		OrTri fnext(OrTri ef);
 
-		void getVertexIdx(OrTri, int& pIdx1,int& pIdx2,int& pIdx3); // return the three indices of the three vertices by OrTri
+		bool getVertexIdx(OrTri, int& pIdx1,int& pIdx2,int& pIdx3); // return the three indices of the three vertices by OrTri
 
 		int org(OrTri);  // the index of the first vertex of OrTri, e.g. org(bcd) => b
 		int dest(OrTri); // the index of the second vertex of OrTri, e.g. org(bcd) => c

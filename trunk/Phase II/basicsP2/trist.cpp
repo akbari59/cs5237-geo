@@ -78,7 +78,7 @@ OrTri Trist::sym(OrTri ef){
 	
 }
 
-void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
+bool Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
 	int index = ef >> 3;
 	int version = ef & 7;
 	TriRecord record = Trist::triangles.at(index);
@@ -91,6 +91,7 @@ void Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
 		pIdx2=record.vi_[v_[version]%100/10];
 		pIdx3=record.vi_[v_[version]%10];
 	/*}*/
+		return record.isLeaf();
 }
 
 int Trist::org(OrTri ef){
