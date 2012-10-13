@@ -31,7 +31,7 @@ TriRecord::TriRecord(int p1, int p2, int p3){
 int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge){
 	TriRecord record(pIndex1, pIndex2, pIndex3);
 	
-	if(autoMerge){
+	if(autoMerge){	//?????????????????????
 	}
 	int index = triangles.size();
 	triangles.push_back(record);
@@ -227,8 +227,8 @@ ostream& operator<< (ostream& out, Trist i ){
 	return out;
 }
 
-
-/*OrTri Trist::findPoint(int pIndex, bool& boundary, PointSetArray psa)
+/*
+OrTri Trist::findPoint(int pIndex, bool& boundary, PointSetArray psa)
 {
 
 	
@@ -271,8 +271,9 @@ ostream& operator<< (ostream& out, Trist i ){
 
 	return ot;
 
-}*/
+}
 
+*/
 void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4){
 	splitTri(pIndex, tri, tri1, tri2);
 	//neighbour must exists, a point cannot lie on the imaginary boundary.
