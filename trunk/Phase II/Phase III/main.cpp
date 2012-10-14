@@ -13,12 +13,11 @@
 #include <iomanip>
 #include <queue>
 
-#include "basicsP2\pointSetArray.h"
-#include "basicsP2\trist.h"
+
 #include "Circle.h"
-#include "glut.h"
-#include "basicsP2\DenaulayTri.h"
-#include <Windows.h>
+
+#include "DenaulayTri.h"
+#include "GL\glut.h"
 
 using namespace std;
 
