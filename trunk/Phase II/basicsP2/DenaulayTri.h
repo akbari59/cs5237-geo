@@ -18,6 +18,7 @@ public:
 	void insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3, OrTri& tri4);// 
 	bool checkLegal(OrTri tri);
 	void legalizeEdge(OrTri tri);
+	void init();
 };
 
 
