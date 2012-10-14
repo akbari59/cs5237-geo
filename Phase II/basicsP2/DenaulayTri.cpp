@@ -141,6 +141,11 @@ void DenaulayTri::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, O
 	trist.insertPoint(pIndex, tri, tri1, tri2, tri3, tri4);
 }
 DenaulayTri::DenaulayTri(){
+	//trist.makeTri(0, -1, -2);// 0 top; -1 right button; -2 left
+	this->init();
+}
+
+void DenaulayTri::init(){
 	trist.makeTri(0, -1, -2);// 0 top; -1 right button; -2 left
 }
 

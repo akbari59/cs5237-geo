@@ -562,10 +562,22 @@ void readFile(){
 
 	if(file_loaded)
 	{
+		//int result = MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL);
 		//remove all points and triangles;
-		DenaulayTriangulation.psa.eraseAllPoints();
-		DenaulayTriangulation.trist.delAllTri();
-		progress=1;
+		if(MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL || MB_ICONEXCLAMATION))
+		{
+
+			DenaulayTriangulation.psa.eraseAllPoints();
+			DenaulayTriangulation.trist.delAllTri();
+			DenaulayTriangulation.init();
+			progress=1;
+			file_loaded =false;
+		}
+		else
+		{
+			return ;
+		}
+
 	}
 
 	
