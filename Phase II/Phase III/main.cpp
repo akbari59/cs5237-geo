@@ -16,8 +16,10 @@
 
 #include "Circle.h"
 
-#include "DenaulayTri.h"
-#include "GL\glut.h"
+#include "basicsP2\DenaulayTri.h"
+#include "glut.h"
+
+#include <Windows.h>
 
 using namespace std;
 
@@ -85,6 +87,7 @@ void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 
 void drawALine(double x1,double y1, double x2, double y2,  float red = 0, float green = 0, float blue = 1, float opaque = 0)
 {
 		glPointSize(1);
+		glLineWidth(1);
 		glBegin(GL_LINE_LOOP);
 		//glColor3f(0,0,1);
 		glColor4f(red,green,blue, opaque);
@@ -97,7 +100,7 @@ void drawALine(double x1,double y1, double x2, double y2,  float red = 0, float 
 void drawATriangle(double x1,double y1, double x2, double y2, double x3, double y3, float red = 0, float green = 0.5, float blue = 0, float opaque = 0)
 {
 		glBegin(GL_POLYGON);
-		//glColor3f(0,0.5,0);
+		glLineWidth(1);
 		glColor4f(red,green,blue, opaque);
 			glVertex2d(x1,y1);
 			glVertex2d(x2,y2);
@@ -109,6 +112,7 @@ void drawATriangle(double x1,double y1, double x2, double y2, double x3, double 
 void glCircle3i(GLint x, GLint y, GLint radius) { 
     
 	float angle; 
+	glLineWidth(2);
 	glBegin(GL_LINE_LOOP);
 	glColor3f(1.0,0.5,0);
 	for(int i = 0; i < 100; i++) { 
@@ -438,10 +442,16 @@ void insertPoint(int pIndex) {
 		display();
 		Sleep(longDelay);
 
-		DenaulayTriangulation.legalizeEdge(tri1);
-		DenaulayTriangulation.legalizeEdge(tri2);
-		DenaulayTriangulation.legalizeEdge(tri3);
-		DenaulayTriangulation.legalizeEdge(tri4);
+		legalizeEdge2(tri1);
+		legalizeEdge2(tri2);
+		legalizeEdge2(tri3);
+		legalizeEdge2(tri4);
+
+
+		//DenaulayTriangulation.legalizeEdge(tri1);
+		//DenaulayTriangulation.legalizeEdge(tri2);
+		//DenaulayTriangulation.legalizeEdge(tri3);
+		//DenaulayTriangulation.legalizeEdge(tri4);
 		
 
 	}
@@ -663,9 +673,12 @@ void keyboard (unsigned char key, int x, int y)
 			{
 				newInsertedPsa.getPoint(i,x,y);
 				last_pIndex = DenaulayTriangulation.psa.addPoint(x,y);
-				insertPoint(last_pIndex);
+				//insertPoint(last_pIndex);
 			}
+			progress = start + 1;
+			delaunayComputation();
 			newInsertedPsa.eraseAllPoints();
+			display();
 			break;
 			
 		
@@ -704,6 +717,16 @@ void mouse(int button, int state, int x, int y)//the point and triangles have to
 
 
 	} //if((button == MOUSE_RIGHT_BUTTON)&&(state == GLUT_UP))
+	else if((button == MOUSE_LEFT_BUTTON)&&(state == GLUT_UP))
+	{
+		int wx, wy, wz;
+		GetOGLPos(x,y, wx, wy, wz);
+		last_pIndex=DenaulayTriangulation.psa.addPoint(wx,wy);
+		delaunayComputation();
+		display();
+
+
+	}
 
 	glutPostRedisplay();
 }
