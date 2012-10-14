@@ -23,8 +23,8 @@
 
 using namespace std;
 
-const double PI = 3.1415926536;
-const double sqrt3 = 1.732050808F;
+const double PI = 3.141592653589793; // 23846 26433 83279 50288 41971 69399 37510; //3.1415926536;
+//const double sqrt3 = 1.732050808F;
 
 // Initial size of graphics window on your screen.
 const int WIDTH  = 700; // in pixels
@@ -66,9 +66,10 @@ OrTri illegalOriTri= -1;
 
 OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
 
-bool showAnimatiion = true;
+bool visualization = true;
 
-int longDelay = 1200;
+int delay = 0;
+int longDelay = delay * 1000;
 int shortDelay = longDelay / 2;
 
 
@@ -393,24 +394,31 @@ void legalizeEdge2(OrTri tri)
 	if(! DenaulayTriangulation.checkLegal(tri))
 	{
 		OrTri tri1, tri2;
+
+		if(visualization)
+		{
 		
-		illegalOriTri = tri;
-		display();
-		Sleep(longDelay);
+			illegalOriTri = tri;
+			display();
+			Sleep(longDelay);
+		}
 
 		DenaulayTriangulation.flipEdge(tri,tri1, tri2);
 
+		if(visualization)
+		{
+			display();
+			Sleep(shortDelay);
+			illegalOriTri = -1;
+		
 
-		display();
-		Sleep(shortDelay);
-		illegalOriTri = -1;
-
-		circumcir1 = tri1;
-		circumcir2 = tri2;
-		circumcir3 = -1;
-		circumcir4 = -1;
-		display();
-		Sleep(shortDelay);
+			circumcir1 = tri1;
+			circumcir2 = tri2;
+			circumcir3 = -1;
+			circumcir4 = -1;
+			display();
+			Sleep(shortDelay);
+		}
 
 
 
@@ -435,12 +443,18 @@ void insertPoint(int pIndex) {
 	if(boundary){
 		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3, tri4);
 
-		circumcir1 = tri1;
-		circumcir2 = tri2;
-		circumcir3 = tri3;
-		circumcir4 = tri4;
-		display();
-		Sleep(longDelay);
+		if(visualization)
+		{
+			circumcir1 = tri1;
+			circumcir2 = tri2;
+			circumcir3 = tri3;
+			circumcir4 = tri4;
+
+			display();
+			Sleep(longDelay);
+
+		}
+		
 
 		legalizeEdge2(tri1);
 		legalizeEdge2(tri2);
@@ -458,11 +472,15 @@ void insertPoint(int pIndex) {
 	else{
 		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3);
 
-		circumcir1 = tri1;
-		circumcir2 = tri2;
-		circumcir3 = tri3;
-		display();
-		Sleep(longDelay);
+		if(visualization)
+		{
+
+			circumcir1 = tri1;
+			circumcir2 = tri2;
+			circumcir3 = tri3;
+			display();
+			Sleep(longDelay);
+		}
 
 		legalizeEdge2(tri1);
 		legalizeEdge2(tri2);
@@ -496,8 +514,9 @@ void delaunayComputation()
 	{
 		
 		insertPoint(progress);
-		display();
-		//Sleep(delay);
+		if(visualization)
+			display();
+		
 
 	}
 
@@ -512,9 +531,13 @@ void delaunayComputation()
 	cerr << "End: " << end << endl;
 	cerr << "Elapsed Time(ms): " << end-start << endl;
 
+	display();
+
 
 	
 }
+
+
 
 
 
@@ -560,8 +583,19 @@ void readFile(){
 		linestream >> line_noStr;
 		linestream >> command;         // get the command
 
-		
-		if(!command.compare("IP")){
+		if(!command.compare("NV")){
+
+			visualization = false;
+
+		} else if(!command.compare("DY")){
+
+			linestream >> numberStr;
+			delay=atoi(numberStr.c_str());
+			longDelay = delay * 1000;
+			shortDelay = longDelay / 2;
+
+		}else if(!command.compare("IP")){
+
 			linestream >> numberStr;
 			LongInt x(numberStr);
 			linestream >> numberStr;
@@ -571,7 +605,7 @@ void readFile(){
 			}	//if(!command.compare("IP")){
 		else if (!command.compare("CD")){
 			delaunayComputation();
-			display();
+			
 		}		 //else if (!command.compare("CD")){
 		else{
 			cerr << "Exception: Wrong input command" << endl;
@@ -761,7 +795,7 @@ void generate_test_input(int num, int bound)
 
 int main(int argc, char **argv)
 {
-	//generate_test_input(100, 400);
+	//generate_test_input(1000, 400);
 	//return 0;
 
 
