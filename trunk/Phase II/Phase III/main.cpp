@@ -16,8 +16,8 @@
 
 #include "Circle.h"
 
-#include "DenaulayTri.h"
-#include "GL\glut.h"
+#include "basicsP2\DenaulayTri.h"
+#include "glut.h"
 
 #include <Windows.h>
 
@@ -262,6 +262,72 @@ void drawTrist(){
 	
 }
 
+void drawVoronoi()
+{
+
+	
+	
+	for(int i= 0; i<DenaulayTriangulation.trist.noTri(); i++)
+	{
+		// find all neighbors
+		//??????????????????????????????
+		
+		int pi1,pi2, pi3;
+		
+		bool tri = DenaulayTriangulation.trist.getVertexIdx(i * 8, pi1, pi2, pi3);
+		bool leaf = DenaulayTriangulation.trist.isLeaf(i * 8);
+		//?????????????????	
+		if(tri && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) && leaf){
+			LongInt x1, y1, x2, y2, x3, y3;
+		
+			DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+			DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+			DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+			Circle circ1(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+			
+			OrTri N1 = DenaulayTriangulation.trist.fnext(i*8);
+			if(N1>0 ){
+				
+				DenaulayTriangulation.trist.getVertexIdx(N1, pi1, pi2, pi3);
+				DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+				DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+				DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+				Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+
+				drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+			}
+
+			OrTri N2 = DenaulayTriangulation.trist.fnext(DenaulayTriangulation.trist.enext( i*8));
+			if(N2>0  ){
+				
+				DenaulayTriangulation.trist.getVertexIdx(N2, pi1, pi2, pi3);
+				DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+				DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+				DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+				Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+
+				drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+			}
+
+			OrTri N3 = DenaulayTriangulation.trist.fnext(DenaulayTriangulation.trist.enext(DenaulayTriangulation.trist.enext( i*8)));
+			if(N3>0  ){
+				
+				DenaulayTriangulation.trist.getVertexIdx(N3, pi1, pi2, pi3);
+				DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+				DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+				DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+				Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+
+				drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+			}
+
+
+		} //if(tri && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) && leaf){
+	}
+
+}
+
+
 void setView()
 {
 
@@ -286,7 +352,7 @@ void display(void)
 
 	// draw your output here (erase the following 3 lines)
 	drawTrist();
-	//drawTristDeluany();
+	//drawVoronoi();
 
 	glPopMatrix();
 	glutSwapBuffers ();
