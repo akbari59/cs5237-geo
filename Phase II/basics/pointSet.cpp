@@ -223,10 +223,10 @@ int PointSet::p0InTri( int p2Idx, int p3Idx, int pIdx, int& edge){
 
 int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx, int& edge){
 	
-	array<LongInt, 2> p1=set[p1Idx-1];
-	array<LongInt, 2> p2=set[p2Idx-1];
-	array<LongInt, 2> p3=set[p3Idx-1];
-	array<LongInt, 2> p=set[pIdx-1];
+	array<LongInt, 2>& p1=set[p1Idx-1];
+	array<LongInt, 2>& p2=set[p2Idx-1];
+	array<LongInt, 2>& p3=set[p3Idx-1];
+	array<LongInt, 2>& p=set[pIdx-1];
 
 	if ( ((p[0] == p1[0]) && (p[1] == p1[1])) ||
 		 ((p[0] == p2[0]) && (p[1] == p2[1])) ||
@@ -299,9 +299,9 @@ int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx, int& edge){
 	return -1;
 }
 int PointSet::symInCircle(int p1Idx, int p2Idx, int p3Idx, int sym){
-	array<LongInt, 2> p1=set[p1Idx-1];
-	array<LongInt, 2> p2=set[p2Idx-1];
-	array<LongInt, 2> p3=set[p3Idx-1];
+	array<LongInt, 2>& p1=set[p1Idx-1];
+	array<LongInt, 2>& p2=set[p2Idx-1];
+	array<LongInt, 2>& p3=set[p3Idx-1];
 	int side=getside(p1, p2, p3);
 	if(sym==0){
 		if(p1[0]>p3[0])
@@ -335,10 +335,10 @@ int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx){
 	}else if(p3Idx<1){
 		return symInCircle(p1Idx, p2Idx, pIdx, p3Idx);
 	}
-	array<LongInt, 2> p1=set[p1Idx-1];
-	array<LongInt, 2> p2=set[p2Idx-1];
-	array<LongInt, 2> p3=set[p3Idx-1];
-	array<LongInt, 2> p=set[pIdx-1];
+	array<LongInt, 2>& p1=set[p1Idx-1];
+	array<LongInt, 2>& p2=set[p2Idx-1];
+	array<LongInt, 2>& p3=set[p3Idx-1];
+	array<LongInt, 2>& p=set[pIdx-1];
 	array<LongInt, 2> v0={p2[0]-p1[0],p2[1]-p1[1]};
 	array<LongInt, 2> v1={p3[0]-p1[0],p3[1]-p1[1]};
 	array<LongInt, 2> v ={p[0]-p1[0],p[1]-p1[1]};

@@ -16,8 +16,8 @@
 
 #include "Circle.h"
 
-#include "basicsP2\DenaulayTri.h"
-#include "glut.h"
+#include "DenaulayTri.h"
+#include "GL\glut.h"
 
 #include <Windows.h>
 
@@ -181,7 +181,7 @@ void drawTrist(){
 		bool tri = DenaulayTriangulation.trist.getVertexIdx(i * 8, pi1, pi2, pi3);
 		bool leaf = DenaulayTriangulation.trist.isLeaf(i * 8);
 		//????????????????
-		if(tri && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) ){
+		if(leaf && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) ){
 			LongInt x1, y1, x2, y2, x3, y3;
 		
 			DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
@@ -481,10 +481,11 @@ void insertPoint(int pIndex) {
 			display();
 			Sleep(longDelay);
 		}
-
-		legalizeEdge2(tri1);
-		legalizeEdge2(tri2);
-		legalizeEdge2(tri3);
+		if(DenaulayTriangulation.trist.noTri()>7){//triangle means 2 points, this case need special treatment, else it will fail due to the symbolic point.  
+		  legalizeEdge2(tri1);
+		  legalizeEdge2(tri2);
+		  legalizeEdge2(tri3);
+		}
 
 
 		//DenaulayTriangulation.legalizeEdge(tri1);
@@ -564,6 +565,7 @@ void readFile(){
 	{
 		//int result = MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL);
 		//remove all points and triangles;
+
 		if(MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL || MB_ICONEXCLAMATION))
 		{
 
@@ -577,6 +579,7 @@ void readFile(){
 		{
 			return ;
 		}
+
 
 	}
 
