@@ -481,11 +481,11 @@ void insertPoint(int pIndex) {
 			display();
 			Sleep(longDelay);
 		}
-		if(DenaulayTriangulation.trist.noTri()>7){//triangle means 2 points, this case need special treatment, else it will fail due to the symbolic point.  
+		
 		  legalizeEdge2(tri1);
 		  legalizeEdge2(tri2);
 		  legalizeEdge2(tri3);
-		}
+		
 
 
 		//DenaulayTriangulation.legalizeEdge(tri1);
@@ -566,19 +566,19 @@ void readFile(){
 		//int result = MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL);
 		//remove all points and triangles;
 
-		if(MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL || MB_ICONEXCLAMATION))
-		{
+		/*if(MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL || MB_ICONEXCLAMATION))
+		{*/
 
 			DenaulayTriangulation.psa.eraseAllPoints();
 			DenaulayTriangulation.trist.delAllTri();
 			DenaulayTriangulation.init();
 			progress=1;
-			file_loaded =false;
-		}
+			//file_loaded =false;
+		/*}
 		else
 		{
 			return ;
-		}
+		}*/
 
 
 	}
