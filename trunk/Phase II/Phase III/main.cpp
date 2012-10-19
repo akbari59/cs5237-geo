@@ -272,12 +272,15 @@ void drawVoronoi()
 		// find all neighbors
 		//??????????????????????????????
 		
+		
 		int pi1,pi2, pi3;
+		OrTri thisTri = i*8;
 		
 		bool tri = DenaulayTriangulation.trist.getVertexIdx(i * 8, pi1, pi2, pi3);
-		bool leaf = DenaulayTriangulation.trist.isLeaf(i * 8);
+		bool leaf = DenaulayTriangulation.trist.isLeaf(thisTri);
 		//?????????????????	
-		if(tri && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) && leaf){
+		if(tri && (pi1 > 0) && (pi2 > 0) && (pi3 > 0) && leaf)
+		{
 			LongInt x1, y1, x2, y2, x3, y3;
 		
 			DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
@@ -285,40 +288,52 @@ void drawVoronoi()
 			DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
 			Circle circ1(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
 			
-			OrTri N1 = DenaulayTriangulation.trist.fnext(i*8);
-			if(N1>0 ){
+			OrTri N1 = DenaulayTriangulation.trist.fnext(thisTri);
+			leaf = DenaulayTriangulation.trist.isLeaf(N1);
+			if(N1>0 && leaf ){
 				
 				DenaulayTriangulation.trist.getVertexIdx(N1, pi1, pi2, pi3);
-				DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
-				DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
-				DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
-				Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+				if((pi1 > 0) && (pi2 > 0) && (pi3 > 0) )
+				{
+					DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+					DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+					DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+					Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
 
-				drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+					drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+				}
 			}
 
-			OrTri N2 = DenaulayTriangulation.trist.fnext(DenaulayTriangulation.trist.enext( i*8));
-			if(N2>0  ){
+			OrTri N2 = DenaulayTriangulation.trist.fnext(DenaulayTriangulation.trist.enext( thisTri));
+			leaf = DenaulayTriangulation.trist.isLeaf(N2);
+			if(N2>0 && leaf ){
 				
 				DenaulayTriangulation.trist.getVertexIdx(N2, pi1, pi2, pi3);
-				DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
-				DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
-				DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
-				Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+				if((pi1 > 0) && (pi2 > 0) && (pi3 > 0) )
+				{
+					DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+					DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+					DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+					Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
 
-				drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+					drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+				}
 			}
 
 			OrTri N3 = DenaulayTriangulation.trist.fnext(DenaulayTriangulation.trist.enext(DenaulayTriangulation.trist.enext( i*8)));
-			if(N3>0  ){
+			leaf = DenaulayTriangulation.trist.isLeaf(N3);
+			if(N3>0  && leaf ){
 				
 				DenaulayTriangulation.trist.getVertexIdx(N3, pi1, pi2, pi3);
-				DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
-				DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
-				DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
-				Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
+				if((pi1 > 0) && (pi2 > 0) && (pi3 > 0) )
+				{
+					DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
+					DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
+					DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
+					Circle circ2(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(), y2.doubleValue(), x3.doubleValue(), y3.doubleValue());
 
-				drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+					drawALine(circ1.m_Center_x, circ1.m_Center_y, circ2.m_Center_x, circ2.m_Center_y, 1.0, 0.5,0);
+				}
 			}
 
 
@@ -881,7 +896,7 @@ int main(int argc, char **argv)
 
 
 	width = 1000; height = 800;
-	cout<<"CS5237 Phase III"<< endl<< endl;
+	cout<<"CS5237 Phase III- Akbari, ZhoungYi, Lakshmi, Zhou Jun"<< endl<< endl;
 	cout << "Right mouse click: OT operation"<<endl;
 	cout << "Q: Quit" <<endl;
 	cout << "R: Read in control points from \"input.txt\"" <<endl;
