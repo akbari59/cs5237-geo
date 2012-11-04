@@ -16,8 +16,8 @@
 
 #include "Circle.h"
 
-#include "basicsP2\DenaulayTri.h"
-#include "glut.h"
+#include "DenaulayTri.h"
+#include "GL\glut.h"
 
 #include <Windows.h>
 

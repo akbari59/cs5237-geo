@@ -1,10 +1,11 @@
 #include "pointSetArray.h"
 
-int PointSetArray::getPoint (int pIndex, LongInt& x1,LongInt& y1){
+int PointSetArray::getPoint (int pIndex, LongInt& x1,LongInt& y1, LongInt& weight){
 	if(pIndex <= set.size()){
-	 std::array<LongInt, 2> point=set[pIndex-1];
+	 std::array<LongInt, 3>& point=set[pIndex-1];
 	 x1=point[0];
 	 y1=point[1];
+	 weight=point[2];
 	 return 1;
 	}else{
 	 return -1;
