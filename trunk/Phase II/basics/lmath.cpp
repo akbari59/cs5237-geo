@@ -19,3 +19,12 @@ int getside( array<LongInt, 2>& p2, array<LongInt, 2>& p3, array<LongInt, 2>& p)
 		           one, p3[0], p3[1],
 				   one, p[0], p[1]);
 }
+
+bool checkEdge(const LongInt& x1, const LongInt& y1, const LongInt& w1, const LongInt& x2, const LongInt& y2, const LongInt& w2, const LongInt& alpha){
+  //do sth
+	return false;
+}
+bool checkTri(const LongInt& x1, const LongInt& y1, const LongInt& w1, const LongInt& x2, const LongInt& y2, const LongInt& w2, const LongInt& x3, const LongInt& y3, const LongInt& w3, const LongInt& alpha){
+	//do sth
+	return false;
+}
