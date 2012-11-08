@@ -28,11 +28,19 @@ TriRecord::TriRecord(int p1, int p2, int p3){
 	vi_[2] = p3;
 	std::fill_n(fnext_, 6, -1);
 }
-int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge){
+int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3){
 	TriRecord record(pIndex1, pIndex2, pIndex3);
 	
-	if(autoMerge){	//?????????????????????
-	}
+	
+	int index = triangles.size();
+	triangles.push_back(record);
+	return index;
+}
+
+int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3, const array<LongInt, 3>& norm){
+	TriRecord record(pIndex1, pIndex2, pIndex3);
+	record.setNorm(norm[0], norm[1], norm[2]);
+	
 	int index = triangles.size();
 	triangles.push_back(record);
 	return index;

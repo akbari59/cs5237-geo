@@ -8,7 +8,7 @@
 class PointSet {
 
 public:
-   std::vector<std::array<LongInt, 3>> set;
+   std::vector<std::array<LongInt, 4>> set;
 	static LongInt l0;
 	int addPoint(LongInt x1,LongInt y1, LongInt weight=0); 
 	// add an ith(according to the adding sequence)  point (x1,y1), return i.

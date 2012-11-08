@@ -7,11 +7,11 @@
 class PointSetArray : public PointSet {
 
 public:
-
-	int getPoint (int pIndex, LongInt& x1,LongInt& y1, LongInt& weight); // put the x,y values into x1,y1, and return 1 if the point pIndex exists
+	int getPoint (unsigned pIndex, LongInt& x1,LongInt& y1);
+	int getPoint (unsigned pIndex, LongInt& x1,LongInt& y1, LongInt& weight); // put the x,y values into x1,y1, and return 1 if the point pIndex exists
 	int noPt();                                         // return the number of points
 	void eraseAllPoints();                              // erase all points in this array
-	int removePoint (int pIndex); // remove the point with index PIndex from psa;
+	int removePoint (unsigned pIndex); // remove the point with index PIndex from psa;
 
 };
 
