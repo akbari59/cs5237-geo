@@ -212,7 +212,7 @@ void drawTrist(){
 		DenaulayTriangulation.psa.getPoint(i,x,y);
 		double tx = x.doubleValue();
 		double ty = y.doubleValue();
-		drawAPoint(tx,ty, 0, 0, 0, 0.6);
+		drawAPoint(tx, ty, 0, 0, 0, 0.6);
 		
 		//just for debugging purpose
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;

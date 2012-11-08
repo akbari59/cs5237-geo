@@ -34,10 +34,13 @@ class TriRecord {
 	protected:
 		int vi_[3];
 		OrTri fnext_[6];
+		LongInt norm[3];
     public:	
 		TriRecord(int p1, int p2, int p3);
+		
 		std::vector<OrTri> childs;
-		bool isLeaf(){return childs.empty();};
+		void setNorm(const LongInt &x, const LongInt &y, const LongInt &z) {norm[0]=x; norm[1]=y; norm[2]=z;};
+		bool isLeaf() const {return childs.empty();};
 		void addChilds(OrTri tri){childs.push_back(tri);};
 		void setFnext(int version, OrTri tri){fnext_[version]=tri;};
 	friend Trist;
@@ -54,9 +57,9 @@ class Trist {
 		std::vector<TriRecord> triangles;
 		Trist();
 		int noTri(); // return the number of triangles
-		int makeTri(int pIndex1,int pIndex2,int pIndex3,bool autoMerge = false); // Add a triangle into the Trist with the three point indices
-		// Moreover, automatically establish the fnext pointers to its neigbhours if autoMerge = true
-
+		int makeTri(int pIndex1,int pIndex2,int pIndex3); // Add a triangle into the Trist with the three point indices
+		
+		int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3, const array<LongInt, 3>& norm);
 		void delTri(OrTri); // Delete a triangle, but you can assume that this is ONLY used by the IP operation
 		                    // You may want to make sure all its neighbours are detached (below)
 		void delAllTri();

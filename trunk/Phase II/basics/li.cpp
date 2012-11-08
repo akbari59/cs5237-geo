@@ -61,7 +61,7 @@ LongInt::LongInt(string sourceString){
 		absolute.push_back( atoi(sourceString.c_str()));
 }
 
-LongInt LongInt::operator*(LongInt& n){
+LongInt LongInt::operator*(const LongInt& n) const{
 	
 	LongInt i;
 	if(signValue!=0&&n.signValue!=0){
@@ -71,7 +71,7 @@ LongInt LongInt::operator*(LongInt& n){
 	return i;
 }
 
-void LongInt::absMult(LongInt& a,  LongInt& b,  LongInt& result){
+void absMult(const LongInt& a,  const LongInt& b,  LongInt& result){
 	
 	if(a.absolute.size()==1){
 		absMult(a.absolute.front(), b, result);
@@ -106,7 +106,7 @@ void LongInt::absMult(LongInt& a,  LongInt& b,  LongInt& result){
 		
 	}
 }
-void LongInt::separate(unsigned length1, LongInt& l1, LongInt& l2){
+void LongInt::separate(unsigned length1, LongInt& l1, LongInt& l2) const{
 	l2.signValue=signValue;
 	for(unsigned i=length1; i<absolute.size();i++){
 		l2.absolute.push_back(absolute[i]);
@@ -131,7 +131,7 @@ void LongInt::separate(unsigned length1, LongInt& l1, LongInt& l2){
 	
 }
 
-void LongInt::shiftSum(LongInt& z2,LongInt& z1, LongInt& z0, unsigned b1, unsigned b0, LongInt& result){
+void shiftSum(const LongInt& z2, const LongInt& z1, const LongInt& z0, unsigned b1, unsigned b0, LongInt& result){
 	//result=z1*Base^b1+z2*Base^b0+z0
 	_int64 v0, v1, v2;
 	unsigned i; 
@@ -156,11 +156,11 @@ void LongInt::shiftSum(LongInt& z2,LongInt& z1, LongInt& z0, unsigned b1, unsign
 			v1=0;
 		}
 		_int64 v=v0+v1+carry;
-		if(v<base){
+		if(v<LongInt::base){
 		  carry=0;
 		}else{
           carry=1;
-		  v=v-base;		  
+		  v=v-LongInt::base;		  
 		}
 		result.absolute.push_back(v);
 	}
@@ -182,12 +182,12 @@ void LongInt::shiftSum(LongInt& z2,LongInt& z1, LongInt& z0, unsigned b1, unsign
 			v2=0;
 		}
 		_int64 v=v0+v1+v2+carry;
-		if(v<base){
+		if(v<LongInt::base){
 			carry=0;
 			result.absolute.push_back(v);
 		}else{
-		    carry=v/base;
-		    result.absolute.push_back(v%base);
+		    carry=v/LongInt::base;
+		    result.absolute.push_back(v%LongInt::base);
 		}
 		i++;
 	}
@@ -195,7 +195,7 @@ void LongInt::shiftSum(LongInt& z2,LongInt& z1, LongInt& z0, unsigned b1, unsign
 		result.absolute.push_back(carry);
 }
 
-void LongInt::shiftSum(LongInt& z1, LongInt& z0, unsigned b, LongInt& result){
+void shiftSum(const LongInt& z1, const LongInt& z0, unsigned b, LongInt& result){
 	//result=z1*Base^b+z0
 	__int64 v0, v1;
 	unsigned i; 
@@ -220,11 +220,11 @@ void LongInt::shiftSum(LongInt& z1, LongInt& z0, unsigned b, LongInt& result){
 			v1=0;
 		}
 		_int64 v=v0+v1+carry;
-		if(v<base){
+		if(v<LongInt::base){
 		  carry=0;
 		}else{
           carry=1;
-		  v=v-base;		  
+		  v=v-LongInt::base;		  
 		}
 		result.absolute.push_back(v);
 		i++;
@@ -232,28 +232,28 @@ void LongInt::shiftSum(LongInt& z1, LongInt& z0, unsigned b, LongInt& result){
 	if(carry>0)
 	result.absolute.push_back(carry);
 }
-void LongInt::absMult(__int64 scaler, LongInt& v, LongInt& result){
+void absMult(__int64 scaler, const LongInt& v, LongInt& result){
 	__int64 carry=0;
 	for(unsigned i=0; i<v.absolute.size(); i++){
 		_int64 value=scaler*v.absolute[i]+carry;
-		if(value<base){
+		if(value<LongInt::base){
 			carry=0;
 		}else{
-			carry=value/base;
-			value=value%base;
+			carry=value/LongInt::base;
+			value=value%LongInt::base;
 		}
 		result.absolute.push_back(value);
 	}
 	
 	  while(carry>0){
-		   _int64 v=carry%base;
-		   carry=carry/base;
+		   _int64 v=carry%LongInt::base;
+		   carry=carry/LongInt::base;
 		   result.absolute.push_back(v);
 	   }
 	
 }
 
-bool LongInt::eqZero(){
+bool LongInt::eqZero() const{
 	return signValue==0;
 }
 
@@ -278,12 +278,12 @@ LongInt& LongInt::operator=(int i ){
 	convert(i);
 	return *this;
 }
-LongInt& LongInt::operator=(LongInt& i){
+LongInt& LongInt::operator=(const LongInt& i){
 	absolute=i.absolute;
 	signValue=i.signValue;
 	return *this;
 }
-LongInt LongInt::operator+(LongInt& n){
+LongInt LongInt::operator+(const LongInt& n) const{
 	if(n.signValue==0)
 		return *this;
 	if(signValue==0)
@@ -318,7 +318,7 @@ LongInt LongInt::operator+(LongInt& n){
 	}
 }
 
-void vappend(vector<_int64>& source, vector<_int64>& target, unsigned start, _int64 carry, _int64 basemax){
+void vappend(const vector<_int64>& source, vector<_int64>& target, unsigned start, _int64 carry, _int64 basemax){
 	for(unsigned i=start; i<source.size();i++){
 		
 		_int64 result=source[i]+carry;
@@ -333,7 +333,7 @@ void vappend(vector<_int64>& source, vector<_int64>& target, unsigned start, _in
 	if(carry==1)
 	  target.push_back(carry);
 }
-int LongInt::abscompare(vector<_int64>& a, vector<_int64>& b){
+int abscompare(const vector<_int64>& a, const vector<_int64>& b){
 	if(a.size()>b.size()){
 		return 1;
 	}else if(a.size()<b.size()){
@@ -351,7 +351,8 @@ int LongInt::abscompare(vector<_int64>& a, vector<_int64>& b){
 	}
 	return 0;
 }
-LongInt LongInt::operator-(LongInt& n){
+
+LongInt LongInt::operator-(const LongInt& n) const{
 	if(n.signValue==0)
 		return *this;
 	if(signValue==0)
@@ -379,14 +380,14 @@ LongInt LongInt::operator-(LongInt& n){
 	}
 	
 }
-void LongInt::absDiff(vector<_int64>& large, vector<_int64>& small, vector<_int64>& result){
+void absDiff(const vector<_int64>& large, const vector<_int64>& small, vector<_int64>& result){
 	_int64 borrow=0;
 	
 	for(unsigned i=0; i<small.size(); i++){
 		_int64 actual=large[i]-borrow;
 		if(actual<small[i]){
 			borrow=1;
-			result.push_back(actual+base-small[i]);
+			result.push_back(actual+LongInt::base-small[i]);
 		}else{
 			borrow=0;
             result.push_back(actual-small[i]);
@@ -397,7 +398,7 @@ void LongInt::absDiff(vector<_int64>& large, vector<_int64>& small, vector<_int6
 			_int64 actual=large[i]-borrow;
 			if(actual<0){
 			   borrow=1;
-			   result.push_back(actual+base);
+			   result.push_back(actual+LongInt::base);
 		    }else{
 			   borrow=0;
                result.push_back(actual);
@@ -408,7 +409,7 @@ void LongInt::absDiff(vector<_int64>& large, vector<_int64>& small, vector<_int6
 		result.pop_back();
 }
 
-bool LongInt::operator>(LongInt& i){
+bool LongInt::operator>(const LongInt& i) const{
 	if(sign()>i.sign()){
 		return true;
 	}else if(sign()==i.sign()){
@@ -418,7 +419,7 @@ bool LongInt::operator>(LongInt& i){
 	   return false;
 	}
 }
-bool LongInt::operator<(LongInt& i){
+bool LongInt::operator<(const LongInt& i) const{
 	if(sign()<i.sign()){
 		return true;
 	}else if(sign()==i.sign()){
@@ -428,7 +429,7 @@ bool LongInt::operator<(LongInt& i){
 	   return false;
 	}
 }
-bool LongInt::operator==(LongInt& i){
+bool LongInt::operator==(const LongInt& i) const{
 	if(sign()==i.sign()&&abscompare(absolute, i.absolute)==0){
 		
 		return true;
@@ -438,11 +439,13 @@ bool LongInt::operator==(LongInt& i){
 }
 
 
-int LongInt::sign(){
+int LongInt::sign() const{
 	return signValue;
 };     // return +1 if it's positive, -1 if it's negative, 0 if it's zero
 
-
+void LongInt::negateSign(){
+	signValue=-signValue;
+}
 double LongInt::doubleValue(){
 	if(signValue==0){
 		return 0;
@@ -455,7 +458,7 @@ double LongInt::doubleValue(){
 	  return signValue*sum;
 	}
 }
-LongInt operator-(LongInt& n){
+LongInt operator-(const LongInt& n){
 	LongInt out=n;
 	out.signValue=-out.signValue;
 	return out;
