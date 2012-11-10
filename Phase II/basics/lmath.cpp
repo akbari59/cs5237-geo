@@ -39,7 +39,7 @@ void getPlaneNorm(const array<LongInt, 4>& p1, const array<LongInt, 4>& p2, cons
 	norm[0]=Det(p1p2[1],p1p2[2],p1p3[1],p1p3[2]); 
 	norm[1]=-Det(p1p2[0],p1p2[2],p1p3[0],p1p3[2]);
 	norm[2]=Det(p1p2[0],p1p2[1],p1p3[0],p1p3[1]);
-	if(norm[2].sign()==-1){
+	if(norm[2].sign()==1){
 		norm[0].negateSign();
 		norm[1].negateSign();
 		norm[2].negateSign();

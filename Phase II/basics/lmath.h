@@ -16,7 +16,7 @@ LongInt Det( LongInt const& a1,  LongInt const& a2,
 int signDet(LongInt x[3][3]) ;
 
 int getside(const array<LongInt, 4>& p2, const array<LongInt, 4>& p3, const array<LongInt, 4>& p);
-void getPlaneNorm(const array<LongInt, 3>& p1, const array<LongInt, 3>& p2, const array<LongInt, 3>& p3, array<LongInt, 3>& norm);
+void getPlaneNorm(const array<LongInt, 4>& p1, const array<LongInt, 4>& p2, const array<LongInt, 4>& p3, array<LongInt, 3>& norm);
 
 bool checkEdge(const LongInt& x1, const LongInt& y1, const LongInt& w1, const LongInt& x2, const LongInt& y2, const LongInt& w2, const LongInt& alpha);
 bool checkTri(const LongInt& x1, const LongInt& y1, const LongInt& w1, const LongInt& x2, const LongInt& y2, const LongInt& w2, const LongInt& x3, const LongInt& y3, const LongInt& w3, const LongInt& alpha);

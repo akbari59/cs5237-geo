@@ -59,7 +59,7 @@ void Trist::delAllTri()
 
 }
 
-OrTri Trist::enext(OrTri ef){
+OrTri Trist::enext(OrTri ef) const{
 	int version = ef & 7;
 	int index = ef >> 3;
 	
@@ -67,14 +67,14 @@ OrTri Trist::enext(OrTri ef){
 	
 }
 
-OrTri Trist::fnext(OrTri ef){
+OrTri Trist::fnext(OrTri ef) const{
 	int version = ef & 7;
 	int index = ef >> 3;	
 	return triangles[index].fnext_[version]; 	
 }
 
 
-OrTri Trist::sym(OrTri ef){
+OrTri Trist::sym(OrTri ef) const{
 	int version = ef & 7;
 	int index = ef >> 3;
 	
@@ -86,42 +86,48 @@ OrTri Trist::sym(OrTri ef){
 	
 }
 
-bool Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3){
+bool Trist::getVertexIdx(OrTri ef, int& pIdx1,int& pIdx2,int& pIdx3) const{
 	int index = ef >> 3;
 	int version = ef & 7;
-	TriRecord record = Trist::triangles.at(index);
-	/*if(record.isEmpty){
-		pIdx1=-1;
-		pIdx2=-1;
-		pIdx3=-1;
-	} else {*/
+	const TriRecord& record = triangles.at(index);
+	
 		pIdx1=record.vi_[v_[version]/100];
 		pIdx2=record.vi_[v_[version]%100/10];
 		pIdx3=record.vi_[v_[version]%10];
-	/*}*/
+	
 		return record.isLeaf();
 }
 
-int Trist::org(OrTri ef){
+int Trist::org(OrTri ef) const{
 	int version = ef & 7;
 	int index = ef >> 3;
-	TriRecord record = Trist::triangles.at(index);
+	const TriRecord& record = Trist::triangles.at(index);
 	
 	return record.vi_[v_[version]/100];
 	
 }
 
-int Trist::dest(OrTri ef){
+int Trist::dest(OrTri ef) const{
 	int version = ef & 7;
 	int index = ef >> 3;
-	TriRecord record = triangles[index];
+	const TriRecord& record = triangles[index];
 	
 	return record.vi_[(v_[version]/10)%10];
 	
 }
 
 
-
+void Trist::setNorm(OrTri ori, const array<LongInt, 3>& norm){
+	int index = ori >> 3;
+	TriRecord& tri=triangles[index];
+	tri.setNorm(norm[0], norm[1], norm[2]);
+}
+array<LongInt, 3> Trist::getNorm(OrTri ori) const{
+	int index = ori >> 3;
+	const TriRecord& tri=triangles[index];
+	array<LongInt, 3> output={tri.norm[0], tri.norm[1], tri.norm[2]};
+	return output;
+}
 void Trist::insertPoint(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2, OrTri& tri3){
 	int p1, p2, p3;
 	int index=tri>>3;
@@ -219,11 +225,49 @@ void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto me
 	record2.addChilds(new_tri1);
 	record2.addChilds(new_tri2);
 }
+void Trist::obtuseflipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2){
+		OrTri old_tri2=fnext(enext(old_tri1));
+	int p1, p2, p3;
+	getVertexIdx(old_tri1, p1, p2, p3);
+	int p4=dest(enext(old_tri2)); 
 
-bool Trist::isLeaf(OrTri tri)
+	new_tri1=makeTri(p1, p2, p4)<<3;	
+	new_tri2=makeTri(p1, p3, p4)<<3;
+
+	//glue the new 2 triangles with neighbours of old triangles
+	OrTri neighbour=fnext(old_tri1);
+	checkSymmerge(new_tri1, neighbour);
+	
+	neighbour=fnext(enext(sym(old_tri1)));
+	checkSymmerge(new_tri2, neighbour);
+	
+
+	
+
+	
+	checkSymmerge(enext(new_tri1), fnext(enext(sym(old_tri2))));
+	checkSymmerge(enext(new_tri2), fnext(enext(old_tri2)));
+
+	
+	
+
+	//glue the two new triangle
+	symMerge(enext(enext(new_tri1)), enext(enext(new_tri2)));
+	
+
+	int index1=old_tri1>>3;
+	int index2=old_tri2>>3;
+	TriRecord& record1=triangles[index1];
+	record1.addChilds(new_tri2);
+	TriRecord& record2=triangles[index2];
+	record2.addChilds(new_tri2);
+	TriRecord& newRecord1=triangles[new_tri1>>3];
+	newRecord1.addChilds(new_tri2);
+}
+bool Trist::isLeaf(OrTri tri) const
 {
 	int index=tri >> 3;
-	TriRecord& triangleRecord=triangles[index];
+	const TriRecord& triangleRecord=triangles[index];
 	return triangleRecord.isLeaf();
 }
 
@@ -234,7 +278,10 @@ ostream& operator<< (ostream& out, TriRecord i ){
        out << " " << *it;
 	return out;
 }
-
+bool Trist::selfMerge(OrTri tri) const{
+	OrTri opposite=fnext(enext(tri));
+	return dest(enext(opposite))==org(tri);
+}
 ostream& operator<< (ostream& out, Trist i ){
 	int c=0;
 	for (vector<TriRecord>::iterator it=i.triangles.begin() ; it < i.triangles.end(); it++ ){
@@ -316,4 +363,10 @@ void Trist::splitTri(int pIndex, OrTri tri, OrTri& tri1, OrTri& tri2){
 	TriRecord& record1=triangles[index];
 	record1.addChilds(tri1);
 	record1.addChilds(tri2);
+}
+
+void Trist::addChild(OrTri child, OrTri parent){
+	int parentIdx=parent >> 3;
+	TriRecord& pRecord=triangles[parentIdx];
+	pRecord.addChilds(child);
 }

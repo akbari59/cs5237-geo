@@ -63,7 +63,8 @@ class Trist {
 		void delTri(OrTri); // Delete a triangle, but you can assume that this is ONLY used by the IP operation
 		                    // You may want to make sure all its neighbours are detached (below)
 		void delAllTri();
-
+		void setNorm(OrTri ori, const array<LongInt, 3>& norm);
+		array<LongInt, 3> getNorm(OrTri ori) const;
 		OrTri findPoint(int pIndex, bool& boundary, PointSetArray psa); 
 		/*tranverse through the tree structure. Starting from the first one, which is the biggest triangle.
 		Boundary indicates whether the point lies on the boundary, true for on the boundary, false for inside the triangle
@@ -79,21 +80,21 @@ class Trist {
 		//use when pIndex is on the first edge of the oriented triangle tri. 
 		
 		void flipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2);/*It will get the old_tri2 via fnext(enext(old_tri1)). If fnext(enext(old_tri1)) does not exists (fnext(enext(old_tri1))==-1), error will be thrown.
-          Let old_tri1=abc and  fnext(enext(old_tri1))=bcd, then new_tri1=abd & new_tri2=acd. 
-          
+          Let old_tri1=abc and  fnext(enext(old_tri1))=bcd, then new_tri1=abd & new_tri2=acd.           
           */
+		void obtuseflipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2); //new_tri1 will not be add as a leaf to old_tri1& oldtri2.
+		void addChild(OrTri child, OrTri parent);
+		bool isLeaf(OrTri tri) const;
 
-		bool isLeaf(OrTri tri);
+		OrTri enext(OrTri ef) const;
+		OrTri sym(OrTri ef) const;
+		OrTri fnext(OrTri ef) const;
 
-		OrTri enext(OrTri ef);
-		OrTri sym(OrTri ef);
-		OrTri fnext(OrTri ef);
+		bool getVertexIdx(OrTri, int& pIdx1,int& pIdx2,int& pIdx3) const; // return the three indices of the three vertices by OrTri
 
-		bool getVertexIdx(OrTri, int& pIdx1,int& pIdx2,int& pIdx3); // return the three indices of the three vertices by OrTri
-
-		int org(OrTri);  // the index of the first vertex of OrTri, e.g. org(bcd) => b
-		int dest(OrTri); // the index of the second vertex of OrTri, e.g. org(bcd) => c
-
+		int org(OrTri) const;  // the index of the first vertex of OrTri, e.g. org(bcd) => b
+		int dest(OrTri) const; // the index of the second vertex of OrTri, e.g. org(bcd) => c
+		bool selfMerge(OrTri tri) const;
 		void fmerge(OrTri abc, OrTri abd); // glue two neighbouring triangles, result abd = fnext(abc)
 		void checkSymmerge(OrTri abc, OrTri abd);
 		void symMerge(OrTri abc, OrTri abd);

@@ -23,6 +23,7 @@ class LongInt {
 		void dump();       // print out this number
 		void LongInt::convert(int i);
 		void LongInt::separate(unsigned length1, LongInt& l1, LongInt& l2) const;
+		void takeAbs();
 		LongInt& operator=(int); 
 		LongInt& operator=(const LongInt&);  
 		LongInt operator+(const LongInt&) const; 
