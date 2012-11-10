@@ -25,8 +25,12 @@ bool checkEdge( LongInt const& x1, LongInt const& y1, LongInt const& w1, LongInt
 	return false;
 }
 bool checkTri( LongInt const& x1, LongInt const& y1, LongInt const& w1, LongInt const& x2, LongInt const& y2, LongInt const& w2, LongInt const& x3, LongInt const& y3, LongInt const& w3, LongInt const& alpha){
-	//do sth
-	return false;
+	LongInt p = x1*(y3-y2)+x2*(y1-y3)+x3*(y2-y1)*2;
+	LongInt x0 = (y1*((x2*x2)-(x3*x3)+w3-w2))+(y2*((x3*x3)-(x1*x1)+w1-w3))+(y3*((x1*x1)-(x2*x2)+w2-w1))+(y1*y2*(y2-y1))+(y2*y3*(y3-y2))+(y1*y3*(y1-y3));
+	LongInt y0 = (x1*(w2-w3))+(x2*(w3-w1))+(x3*(w1-w2))+((x1-x2)*((y3*y3)+(x1*x2)))+((x2-x3)*((y1*y1)+(x2*x3)))+((x3-x1)*((y2*y2)+(x1*x3)));
+	LongInt birthP = x0*x0+(x1*x1*p*p)-(x0*x1*p*2)+(y0*y0)+(y2*y1*p*p)-(y0*y1*p*2)-(w1*p*p);
+	LongInt modifiedAlpha = alpha*alpha*p*p;
+	return !(modifiedAlpha<birthP);
 }
 
 void getPlaneNorm(const array<LongInt, 4>& p1, const array<LongInt, 4>& p2, const array<LongInt, 4>& p3, array<LongInt, 3>& norm){
