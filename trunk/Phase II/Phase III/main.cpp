@@ -477,34 +477,30 @@ void legalizeEdge2(OrTri tri)
 		OrTri tri1, tri2;
 
 		if(visualization)
-		{
-		
+		{		
 			illegalOriTri = tri;
 			display();
 			Sleep(longDelay);
 		}
-
-		DenaulayTriangulation.flipEdge(tri,tri1, tri2);
-
-		if(visualization)
-		{
-			display();
-			Sleep(shortDelay);
-			illegalOriTri = -1;
-		
-
-			circumcir1 = tri1;
-			circumcir2 = tri2;
-			circumcir3 = -1;
-			circumcir4 = -1;
-			display();
-			Sleep(shortDelay);
-		}
-
-
-
-		legalizeEdge2(tri1);
-		legalizeEdge2(tri2);
+		 
+		    DenaulayTriangulation.flipEdge(tri,tri1, tri2);		
+		    if(visualization)
+		    {
+			  display();
+			  Sleep(shortDelay);
+			  illegalOriTri = -1;
+			  circumcir1 = tri1;
+			  circumcir2 = tri2;
+			  circumcir3 = -1;
+			  circumcir4 = -1;
+			  display();
+			  Sleep(shortDelay);
+		    } 		
+		 legalizeEdge2(tri1);
+		 legalizeEdge2(tri2);
+		 
+	}else{
+		DenaulayTriangulation.setNorm(tri);
 	}
 
 }
@@ -514,7 +510,7 @@ void insertPoint(int pIndex) {
 	OrTri tri;
 	bool boundary;
 	
-	tri= DenaulayTriangulation.findPoint(pIndex,boundary);
+ 	tri= DenaulayTriangulation.findPoint(pIndex,boundary);
 
 	OrTri tri1, tri2, tri3,tri4;
 
@@ -522,10 +518,11 @@ void insertPoint(int pIndex) {
 	// else delete 2 triangles and create 4 triangles
 
 	if(boundary){
-		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3, tri4);
+		
+		if(DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3, tri4)){
 
-		if(visualization)
-		{
+		  if(visualization)
+		  {
 			circumcir1 = tri1;
 			circumcir2 = tri2;
 			circumcir3 = tri3;
@@ -534,14 +531,12 @@ void insertPoint(int pIndex) {
 			display();
 			Sleep(longDelay);
 
+		  }
+		 DenaulayTriangulation.legalizeEdge(tri1);
+		 DenaulayTriangulation.legalizeEdge(tri2);
+		 DenaulayTriangulation.legalizeEdge(tri3);
+		 DenaulayTriangulation.legalizeEdge(tri4);
 		}
-		
-
-		legalizeEdge2(tri1);
-		legalizeEdge2(tri2);
-		legalizeEdge2(tri3);
-		legalizeEdge2(tri4);
-
 
 		//DenaulayTriangulation.legalizeEdge(tri1);
 		//DenaulayTriangulation.legalizeEdge(tri2);
@@ -551,22 +546,20 @@ void insertPoint(int pIndex) {
 
 	}
 	else{
-		DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3);
-
-		if(visualization)
-		{
-
+		if(DenaulayTriangulation.insertPoint(pIndex,tri,tri1,tri2,tri3)){
+		  if(visualization)
+		  {
 			circumcir1 = tri1;
 			circumcir2 = tri2;
 			circumcir3 = tri3;
 			display();
 			Sleep(longDelay);
+		  }
+		
+		  DenaulayTriangulation.legalizeEdge(tri1);
+		  DenaulayTriangulation.legalizeEdge(tri2);
+		  DenaulayTriangulation.legalizeEdge(tri3);
 		}
-		
-		  legalizeEdge2(tri1);
-		  legalizeEdge2(tri2);
-		  legalizeEdge2(tri3);
-		
 
 
 		//DenaulayTriangulation.legalizeEdge(tri1);
@@ -698,11 +691,19 @@ void readFile(){
 			LongInt y(numberStr);
 			last_pIndex=DenaulayTriangulation.psa.addPoint(x,y);
 				
-			}	//if(!command.compare("IP")){
-		else if (!command.compare("CD")){
+		}else if(!command.compare("IW")){
+			linestream >> numberStr;
+			LongInt x(numberStr);
+			linestream >> numberStr;
+			LongInt y(numberStr);
+			linestream >> numberStr;
+			LongInt w(numberStr);
+			last_pIndex=DenaulayTriangulation.psa.addPoint(x,y,w);
+			
+		}else if (!command.compare("CD")){
 			delaunayComputation();
 			
-		}		 //else if (!command.compare("CD")){
+		}		 
 		else{
 			cerr << "Exception: Wrong input command" << endl;
 		}
@@ -724,11 +725,11 @@ void writeFile()
 	// obtain individual point data from psa and writing the AP command
 	for(int i= 1; i<=DenaulayTriangulation.psa.noPt(); i++)
 	{
-		LongInt x,y;
-		DenaulayTriangulation.psa.getPoint(i,x,y);
-		double dx = x.doubleValue();
-		double dy = y.doubleValue();
-		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": IP " << dx << " " << dy << endl;
+		LongInt x,y, w, z;
+		DenaulayTriangulation.psa.getPoint(i,x,y, w, z);
+		//double dx = x.doubleValue();
+		//double dy = y.doubleValue();
+		outputFile<<std::setw(4) << std::setfill('0') << instCount << ": IW " << x << " " << y << " "<<w<<endl;
 		instCount++;
 	}
 

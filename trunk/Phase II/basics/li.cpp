@@ -446,6 +446,9 @@ int LongInt::sign() const{
 void LongInt::negateSign(){
 	signValue=-signValue;
 }
+void LongInt::takeAbs(){
+	signValue=signValue*signValue;
+}
 double LongInt::doubleValue(){
 	if(signValue==0){
 		return 0;
