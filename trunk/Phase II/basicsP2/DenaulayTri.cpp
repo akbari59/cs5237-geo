@@ -127,42 +127,48 @@ bool DenaulayTri::checkLegal(OrTri tri) const{
 void DenaulayTri::legalizeEdge(OrTri tri)
 {
 	if(trist.isLeaf(tri)){
-	  if(!checkLegal(tri))
-	  {
-		int oflip_v=isObtuseFlip(tri);
-		if(oflip_v>-1){
-		 OrTri tri1, tri2, tri3;
-		 OrTri tri4=-1;
-		 trist.obtuseflipEdge(tri, tri1, tri2);//may need special flip, tri1 cannot be add as child
-		 tri1=trist.fnext(tri1);
-		 vector<OrTri> newTriangle;
-		 newTriangle.push_back(tri2);
-		 while(!trist.selfMerge(tri1)){
-			 
+		if(trist.selfMerge(tri)){
+			OrTri selfNeighbour=trist.fnext(trist.enext(trist.enext(tri)));
+            OrTri opposite=trist.fnext(trist.enext(tri));
+			OrTri oppositeNeighbour=trist.fnext(trist.enext(opposite));
+			trist.checkSymmerge(selfNeighbour, oppositeNeighbour);
+			//trist.addChild(oppositeNeighbour, tri);
+			trist.addChild(opposite, tri);
+		}else if(!checkLegal(tri))
+	    {
+		  int oflip_v=isObtuseFlip(tri);
+		  if(oflip_v>-1){
+		    OrTri tri1, tri2; //tri3;
+		    //OrTri tri4=-1;
+		    trist.obtuseflipEdge(tri, tri1, tri2);//may need special flip, tri1 cannot be add as child
+		    tri1=trist.fnext(tri1);
+			legalizeEdge(tri1);
+			legalizeEdge(tri2);
+		    /*vector<OrTri> newTriangle;
+		    newTriangle.push_back(tri2);
+		    while(!trist.selfMerge(tri1)){			 
 		     flipEdge(tri1, tri3, tri4);
 			 newTriangle.push_back(tri4);
 		     tri1=tri3;		  
-		 }
-		 trist.addChild(tri2, tri1);
-		 if(tri4>-1){
+		   }
+		  trist.addChild(tri2, tri1);
+		  if(tri4>-1){
 		  
-		  trist.symMerge(trist.enext(trist.sym(tri4)), trist.enext(trist.sym(tri2)));
-		 }else{
+		   trist.symMerge(trist.enext(trist.sym(tri4)), trist.enext(trist.sym(tri2)));
+		  }else{
 			 OrTri neighbour=trist.fnext(trist.enext(trist.sym(tri1)));
 			 trist.symMerge(neighbour, trist.enext(trist.sym(tri2)));
-		 }
-		 /*legalizeEdge(tri2);
-		 if(tri4>-1)
-		  legalizeEdge(tri4);*/
+		  }
+		 
 		 for(int i=0; i<newTriangle.size(); i++){
 			 legalizeEdge(newTriangle[i]);
-		 }
-		}else{
+		 }*/
+		 }else{
 		  OrTri tri1, tri2;
 		  flipEdge(tri, tri1, tri2);
 		  legalizeEdge(tri1);
 		  legalizeEdge(tri2);
-		}
+		 }
 	  }else{
 	    setNorm(tri);
 	  }
