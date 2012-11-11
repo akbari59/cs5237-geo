@@ -227,7 +227,7 @@ void Trist::flipEdge(OrTri old_tri1, OrTri& new_tri1, OrTri& new_tri2){//auto me
 }
 void Trist::obtuseflipEdge(OrTri old_tri1,  OrTri& new_tri1, OrTri& new_tri2){
 		OrTri old_tri2=fnext(enext(old_tri1));
-	int p1, p2, p3;
+	int p1, p2, p3; 
 	getVertexIdx(old_tri1, p1, p2, p3);
 	int p4=dest(enext(old_tri2)); 
 
@@ -280,7 +280,10 @@ ostream& operator<< (ostream& out, TriRecord i ){
 }
 bool Trist::selfMerge(OrTri tri) const{
 	OrTri opposite=fnext(enext(tri));
-	return dest(enext(opposite))==org(tri);
+	if(opposite>-1)
+	    return dest(enext(opposite))==org(tri);
+	else
+		return false;
 }
 ostream& operator<< (ostream& out, Trist i ){
 	int c=0;
