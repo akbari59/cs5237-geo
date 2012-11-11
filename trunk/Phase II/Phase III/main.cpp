@@ -16,8 +16,8 @@
 
 #include "Circle.h"
 
-#include "DenaulayTri.h"
-#include "GL\glut.h"
+#include "basicsP2\DenaulayTri.h"
+#include "glut.h"
 
 #include <Windows.h>
 
@@ -58,7 +58,7 @@ int progress=1;
 int last_pIndex;
 DenaulayTri DenaulayTriangulation;
 
-//Trist worksetTrist;
+Trist alphaShapeTrist;
 PointSetArray newInsertedPsa;
 
 int circumcir1 = -1, circumcir2 = -1, circumcir3 = -1, circumcir4 = -1;
@@ -68,9 +68,12 @@ OrTri tempOriTri1= -1,tempOriTri2= -1,tempOriTri3 = -1;
 
 bool visualization = true;
 
+int alphaValue = 0;
 int delay = 0;
 int longDelay = delay * 1000;
 int shortDelay = longDelay / 2;
+
+void alphaShapeComputation(int alphaValue);
 
 
 void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 0, float opaque = 0)
@@ -255,6 +258,8 @@ void drawTrist(){
 
 		//drawOriTri(illegalOriTri);
 	}
+
+	alphaShapeComputation(alphaValue);
 
 	//glutSwapBuffers();
 	
@@ -470,6 +475,7 @@ void init(void)
 	glShadeModel(GL_FLAT);
 }
 
+/*
 void legalizeEdge2(OrTri tri)
 {
 	if(! DenaulayTriangulation.checkLegal(tri))
@@ -505,6 +511,7 @@ void legalizeEdge2(OrTri tri)
 
 }
 
+*/
 void insertPoint(int pIndex) {
 		
 	OrTri tri;
@@ -612,6 +619,37 @@ void delaunayComputation()
 	
 }
 
+void alphaShapeComputation(int alphaV)
+{
+	
+
+	for(int i= 0; i<DenaulayTriangulation.trist.noTri(); i++)
+	{
+		int pi1,pi2, pi3;
+		
+		bool tri = DenaulayTriangulation.trist.getVertexIdx(i * 8, pi1, pi2, pi3);
+
+		LongInt x1, y1, w1, x2, y2, w2, x3, y3, w3;
+		LongInt z1, z2, z3;
+		LongInt alpha = LongInt(alphaV);
+
+		if( (pi1 > 0) && (pi2 > 0) && (pi3 > 0) ){
+		DenaulayTriangulation.psa.getPoint( pi1,x1,y1,w1,z1);
+		DenaulayTriangulation.psa.getPoint( pi2,x2,y2,w2,z2);
+		DenaulayTriangulation.psa.getPoint( pi3,x3,y3,w3,z3);
+
+
+		bool alphatri = checkTri( x1, y1, w1, x2, y2, w2, x3, y3, w3, alpha);
+		if(alphatri )
+			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0.0,0.0);
+		}
+		
+	}
+
+
+	
+}
+
 
 
 
@@ -703,7 +741,12 @@ void readFile(){
 		}else if (!command.compare("CD")){
 			delaunayComputation();
 			
-		}		 
+		}else if(!command.compare("AL"))
+		{
+			linestream >> numberStr;
+			alphaValue=atoi(numberStr.c_str());
+
+		}
 		else{
 			cerr << "Exception: Wrong input command" << endl;
 		}
