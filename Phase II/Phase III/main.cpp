@@ -91,7 +91,7 @@ void drawAPoint(double x,double y, float red = 0, float green = 0, float blue = 
 void drawALine(double x1,double y1, double x2, double y2,  float red = 0, float green = 0, float blue = 1, float opaque = 0)
 {
 		glPointSize(1);
-		glLineWidth(1);
+		glLineWidth(2);
 		glBegin(GL_LINE_LOOP);
 		//glColor3f(0,0,1);
 		glColor4f(red,green,blue, opaque);
@@ -612,7 +612,7 @@ void alphaShapeComputation(int alphaV)
 
 		bool alphatri = checkTri( x1, y1, w1, x2, y2, w2, x3, y3, w3, alpha);
 		if(alphatri )
-			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0.0,0.0);
+			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.5,0.5,0.5);
 
 		bool alphaEdge1 = checkEdge(x1, y1, w1, x2, y2, w2, alpha);
 		if(alphaEdge1)
