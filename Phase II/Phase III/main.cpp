@@ -137,6 +137,11 @@ void drawCircle(double x1,double y1, double x2, double y2, double x3, double y3)
 	
 }
 
+void drawAWeightedPoint(double x,double y, double w, float red = 0, float green = 0, float blue = 0, float opaque = 0)
+{
+	glCircle3i(x, y, sqrt(w));
+}
+
 void drawCircumscribeCircleForTriangle(OrTri t)
 {
 
@@ -211,53 +216,17 @@ void drawTrist(){
 	//for(int i= 1; i<=DenaulayTriangulation.psa.noPt(); i++)
 	for(int i= 1; i< progress; i++)
 	{
-		LongInt x,y;
-		DenaulayTriangulation.psa.getPoint(i,x,y);
+		LongInt x,y, z, w;
+		DenaulayTriangulation.psa.getPoint(i,x,y,w,z);
 		double tx = x.doubleValue();
 		double ty = y.doubleValue();
-		drawAPoint(tx, ty, 0, 0, 0, 0.6);
+		double tw = w.doubleValue();
+		drawAWeightedPoint(tx, ty,tw, 0, 0, 0, 0.6);
 		
 		//just for debugging purpose
 		//cout<<"point at->"<<tx<<"," <<ty<<endl;
 	}
 
-	for(int i= 1; i<=newInsertedPsa.noPt(); i++)
-	{
-		LongInt x,y;
-		newInsertedPsa.getPoint(i,x,y);
-		double tx = x.doubleValue();
-		double ty = y.doubleValue();
-		drawAPoint(tx,ty, 0.6, 0, 0, 0.7);
-
-		//just for debugging purpose
-		//cout<<"point at->"<<tx<<"," <<ty<<endl;
-	}
-
-	drawCircumscribeCircleForTriangle(circumcir1);
-	drawCircumscribeCircleForTriangle(circumcir2);
-	drawCircumscribeCircleForTriangle(circumcir3);
-	drawCircumscribeCircleForTriangle(circumcir4);
-
-	if(illegalOriTri > -1)	//draw illegal edge
-	{
-		//OrTri neighbour = DenaulayTriangulation.trist.enext(illegalOriTri) ;
-		int pi1,pi2, pi3;
-		bool temp = DenaulayTriangulation.trist.getVertexIdx(illegalOriTri, pi1, pi2, pi3);
-
-		if((pi1 > 0) && (pi2 > 0) && (pi3 > 0))
-		{
-		
-			LongInt x1, y1, x2, y2, x3, y3;
-		
-			DenaulayTriangulation.psa.getPoint(pi1,x1,y1);
-			DenaulayTriangulation.psa.getPoint(pi2,x2,y2);
-			DenaulayTriangulation.psa.getPoint(pi3,x3,y3);
-			drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0.0,0.0);
-		}
-
-
-		//drawOriTri(illegalOriTri);
-	}
 
 	alphaShapeComputation(alphaValue);
 
@@ -621,6 +590,8 @@ void delaunayComputation()
 
 void alphaShapeComputation(int alphaV)
 {
+
+
 	
 
 	for(int i= 0; i<DenaulayTriangulation.trist.noTri(); i++)
@@ -642,8 +613,23 @@ void alphaShapeComputation(int alphaV)
 		bool alphatri = checkTri( x1, y1, w1, x2, y2, w2, x3, y3, w3, alpha);
 		if(alphatri )
 			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0.0,0.0);
+
+		bool alphaEdge1 = checkEdge(x1, y1, w1, x2, y2, w2, alpha);
+		if(alphaEdge1)
+			drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(),0.7,0,0);
+
+		bool alphaEdge2 = checkEdge(x1, y1, w1, x3, y3, w3, alpha);
+		if(alphaEdge2)
+			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
+
+		bool alphaEdge3 = checkEdge(x2, y2, w2, x3, y3, w3, alpha);
+		if(alphaEdge3)
+			drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
+
+
 		}
 		
+
 	}
 
 
