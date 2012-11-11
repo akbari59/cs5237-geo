@@ -21,9 +21,16 @@ int getside(const array<LongInt, 4>& p2, const array<LongInt, 4>& p3, const arra
 }
 
 bool checkEdge( LongInt const& x1, LongInt const& y1, LongInt const& w1, LongInt const& x2, LongInt const& y2, LongInt const& w2, LongInt const& alpha){
-  //do sth
-	return false;
+	
+	// distance between the two weighted points
+	LongInt d = sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); 
+
+	// Condition when the balls just touch each other, also just touch voronoi edge
+	LongInt birth = (d-w1-w2)/2;
+
+	return !(alpha*alpha < birth);
 }
+
 bool checkTri( LongInt const& x1, LongInt const& y1, LongInt const& w1, LongInt const& x2, LongInt const& y2, LongInt const& w2, LongInt const& x3, LongInt const& y3, LongInt const& w3, LongInt const& alpha){
 	LongInt p = x1*(y3-y2)+x2*(y1-y3)+x3*(y2-y1)*2;
 	LongInt x0 = (y1*((x2*x2)-(x3*x3)+w3-w2))+(y2*((x3*x3)-(x1*x1)+w1-w3))+(y3*((x1*x1)-(x2*x2)+w2-w1))+(y1*y2*(y2-y1))+(y2*y3*(y3-y2))+(y1*y3*(y1-y3));
