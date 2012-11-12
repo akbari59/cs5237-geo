@@ -16,8 +16,8 @@
 
 #include "Circle.h"
 
-#include "basicsP2\DenaulayTri.h"
-#include "glut.h"
+#include "DenaulayTri.h"
+#include "GL\glut.h"
 
 #include <Windows.h>
 
@@ -588,22 +588,49 @@ void delaunayComputation()
 	
 }
 
+bool checkEdgeWithAlphaAndAlphaSqaure(OrTri tri, const LongInt& alpha, const LongInt& alphaSquare){
+	        int side=DenaulayTriangulation.checkVoronoiSideRational(tri);
+
+			OrTri neigbhour=DenaulayTriangulation.trist.fnext(tri);
+			int neigbhourside=1;
+			if(neigbhour>-1){
+				int pi1, pi2, pi3;
+				DenaulayTriangulation.trist.getVertexIdx(neigbhour, pi1, pi2, pi3);
+				if( (pi1 > 0) && (pi2 > 0) && (pi3 > 0) )
+				neigbhourside=DenaulayTriangulation.checkVoronoiSideRational(neigbhour);
+			}
+			if(side==1&&neigbhourside==1){
+				int pi1,pi2, pi3;
+				LongInt x1, y1, w1, x2, y2, w2, z;
+		        DenaulayTriangulation.trist.getVertexIdx(tri, pi1, pi2, pi3);
+				DenaulayTriangulation.psa.getPoint( pi1,x1,y1,w1,z);
+		        DenaulayTriangulation.psa.getPoint( pi2,x2,y2,w2,z);
+		        return checkEdge(x1, y1, w1, x2, y2, w2, alpha);
+			   
+			}else if(neigbhourside<1){
+				return DenaulayTriangulation.compareBirthTime(tri, alphaSquare);
+			}
+			//from the way of the function is call, case side<1 has been handled in other part of the code. 
+			return false;
+}
+
 void alphaShapeComputation(int alphaV)
 {
-
-
-	
-
+	int pi1,pi2, pi3;
 	for(int i= 0; i<DenaulayTriangulation.trist.noTri(); i++)
 	{
-		int pi1,pi2, pi3;
 		
-		bool tri = DenaulayTriangulation.trist.getVertexIdx(i * 8, pi1, pi2, pi3);
+		
+		OrTri tri=i<<3;
+		if(!DenaulayTriangulation.trist.isLeaf(tri))
+			continue;
+
+		 DenaulayTriangulation.trist.getVertexIdx(tri, pi1, pi2, pi3);
 
 		LongInt x1, y1, w1, x2, y2, w2, x3, y3, w3;
 		LongInt z1, z2, z3;
 		LongInt alpha = LongInt(alphaV);
-
+		LongInt alphaSquare = LongInt(alphaV*alphaV);
 		if( (pi1 > 0) && (pi2 > 0) && (pi3 > 0) ){
 		DenaulayTriangulation.psa.getPoint( pi1,x1,y1,w1,z1);
 		DenaulayTriangulation.psa.getPoint( pi2,x2,y2,w2,z2);
@@ -611,20 +638,26 @@ void alphaShapeComputation(int alphaV)
 
 
 		bool alphatri = checkTri( x1, y1, w1, x2, y2, w2, x3, y3, w3, alpha);
-		if(alphatri )
+		if(alphatri ){
 			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.5,0.5,0.5);
-
-		bool alphaEdge1 = checkEdge(x1, y1, w1, x2, y2, w2, alpha);
-		if(alphaEdge1)
-			drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(),0.7,0,0);
-
-		bool alphaEdge2 = checkEdge(x1, y1, w1, x3, y3, w3, alpha);
-		if(alphaEdge2)
+		    drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(),0.7,0,0);
 			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
-
-		bool alphaEdge3 = checkEdge(x2, y2, w2, x3, y3, w3, alpha);
-		if(alphaEdge3)
-			drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
+			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
+		}else{
+			
+			if(checkEdgeWithAlphaAndAlphaSqaure(tri, alpha, alphaSquare)){
+			  drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(),0.7,0,0);
+			}
+			tri=DenaulayTriangulation.trist.enext(tri);
+			if(checkEdgeWithAlphaAndAlphaSqaure(tri, alpha, alphaSquare)){
+			  drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
+			}
+			tri=DenaulayTriangulation.trist.enext(tri);
+			if(checkEdgeWithAlphaAndAlphaSqaure(tri, alpha, alphaSquare)){
+			  drawALine(x3.doubleValue(),y3.doubleValue(), x1.doubleValue(),y1.doubleValue(),0.7,0,0);
+			}
+		
+		}
 
 
 		}
@@ -635,10 +668,6 @@ void alphaShapeComputation(int alphaV)
 
 	
 }
-
-
-
-
 
 
 

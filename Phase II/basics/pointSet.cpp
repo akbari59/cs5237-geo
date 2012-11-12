@@ -204,40 +204,6 @@ int PointSet::p0InTri( int p2Idx, int p3Idx, int pIdx, int& edge){
 	return side;
 }
 
-/*int PointSet::inTri(int p1Idx, int p2Idx, int p3Idx, int pIdx, int& edge){
-	array<LongInt, 3> p1=set[p1Idx-1];
-	array<LongInt, 3> p2=set[p2Idx-1];
-	array<LongInt, 3> p3=set[p3Idx-1];
-	array<LongInt, 3> p=set[pIdx-1];
-	int correctside=getside(p1,p2,p3);
-	
-	int side=getside(p1,p2,p);
-	bool onBoundary=false;
-	if(side==0){
-		edge=0;
-		onBoundary=true;
-	}else if(correctside!=side){
-		return -1;
-	}
-	side=getside(p2,p3,p);
-	if(side==0){
-		edge=1;
-		onBoundary=true;
-	}else if(correctside!=side){
-		return -1;
-	}
-	side=getside(p3,p1,p);
-	if(side==0){
-		edge=2;
-		onBoundary=true;
-	}else if(correctside!=side){
-		return -1;
-	}
-	if(onBoundary)
-		return 0;
-	else
-		return 1;
-}*/
 
 
 
@@ -382,5 +348,11 @@ int PointSet::inCircle(int p1Idx, int p2Idx, int p3Idx, int pIdx) const{
 	else
 		return 0;
 	
+}
+
+int PointSet::getPointSideRational(int p1Idx, int p2Idx, const LongInt& x, const LongInt& y, const LongInt& denominator) const{
+	array<LongInt, 4> const& p1=set[p1Idx-1];
+	array<LongInt, 4> const& p2=set[p2Idx-1];
+	return getsideRational(p1, p2, x, y, denominator);
 }
 

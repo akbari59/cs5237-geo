@@ -231,7 +231,7 @@ int DenaulayTri::checkSymBelowPlane(int p1Idx, int p2Idx, int p3Idx, int pIdx) c
 	}
 	else if(p2Idx<1){
 		return psa.symInCircle(p1Idx, p3Idx, pIdx, p2Idx);
-	}else if(p3Idx<1){
+	}else{
 		return psa.symInCircle(p1Idx, p2Idx, pIdx, p3Idx);
 	}
 }
@@ -278,3 +278,37 @@ void DenaulayTri::init(){
 	trist.makeTri(0, -1, -2);// 0 top; -1 right button; -2 left
 }
 
+int DenaulayTri::checkPointSideRational(OrTri tri, const LongInt& x, const LongInt& y, const LongInt& denominator) const{
+	int p1, p2, p3;
+	trist.getVertexIdx(tri, p1, p2, p3);
+	int p3side=psa.getPointSide(p1,p2,p3);
+	int pside=psa.getPointSideRational(p1, p2, x, y, denominator);
+	return p3side*pside;
+}
+int DenaulayTri::checkVoronoiSideRational(OrTri tri){
+	LongInt x, y, denominator;
+	if(!trist.voronoiVertexAvailable(tri)){
+		computeVoronoiVertex(tri);
+	}
+	trist.getVoronoiVertex(tri, x, y, denominator);
+	return checkPointSideRational(tri, x, y, denominator); 
+}
+void DenaulayTri::computeVoronoiVertex(OrTri tri){
+	int p1, p2, p3;
+	trist.getVertexIdx(tri, p1, p2, p3);
+	LongInt x, y, denominator;
+	psa.computeVoronoiVertex(p1, p2, p3, x, y, denominator);
+	trist.setVoronoiVertex(tri, x, y, denominator);
+
+}
+bool DenaulayTri::compareBirthTime(OrTri tri, const LongInt& AlphaSquare){
+	
+	if(!trist.birthTimeAvailable(tri)){
+		int p1=trist.org(tri);
+		if(!trist.voronoiVertexAvailable(tri)){
+		   computeVoronoiVertex(tri);
+	    }
+		trist.setbirthTime(tri, psa.set[p1-1]);
+	}
+	return trist.compareBirthTime(tri, AlphaSquare);
+}

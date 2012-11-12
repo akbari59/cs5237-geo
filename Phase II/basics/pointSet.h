@@ -25,6 +25,8 @@ public:
 	int symInCircle(int p1Idx, int p2Idx, int p3Idx, int sym) const;//
 	int getPointSide(int p1, int p2, int p) const;
 	LongInt getTriangeSide2TimesArea(int p1, int p2, int p) const;
+	int getPointSideRational(int p1, int p2, const LongInt& x, const LongInt& y, const LongInt& denominator) const;
+	
 	
 };
 

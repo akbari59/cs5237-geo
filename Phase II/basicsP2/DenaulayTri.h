@@ -25,6 +25,14 @@ public:
 	//If it is not a Obtuse flip tri will not changed, else it will be rotate to so that dest(tri) is the obtuse vertex.
 	void removePoint(int p1, OrTri removeTri, OrTri coverTri);
 	void legalizeEdge(OrTri tri);
+	int checkPointSideRational(OrTri tri, const LongInt& x, const LongInt& y, const LongInt& denominator) const;
+		//point p coordinate is (x/denominator, y/denominator). Let tri=abc, it check whether p lies on the same side of c regarding ab. 1 for yes,
+		//-1 no; 0 p on ab.
+	int checkVoronoiSideRational(OrTri tri);
+		//Let p be Voronoi Vertex of tri, tri=abc, it check whether p lies on the same side of c regarding ab. 1 for yes,
+		//-1 no; 0 p on ab.
+	void computeVoronoiVertex(OrTri tri);
+	bool compareBirthTime(OrTri tri, const LongInt& AlphaSquare);
 	void init();
 };
 

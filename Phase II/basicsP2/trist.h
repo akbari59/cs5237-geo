@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "pointSetArray.h"
+#include "TriangleBirthTime.h"
 /*
 
   For a triangle abc, if version 0 is abc
@@ -35,12 +36,24 @@ class TriRecord {
 		int vi_[3];
 		OrTri fnext_[6];
 		LongInt norm[3];
+		bool coordinate_available, birthtime_available;
+		
+		
     public:	
 		TriRecord(int p1, int p2, int p3);
-		
+		LongInt x, y, denominator; //voronoi vertex coordinate
+		TriangleBirthTime tbt;
 		std::vector<OrTri> childs;
 		void setNorm(const LongInt &x, const LongInt &y, const LongInt &z) {norm[0]=x; norm[1]=y; norm[2]=z;};
 		bool isLeaf() const {return childs.empty();};
+		void setVoronoiVertex(const LongInt &cx, const LongInt &cy, const LongInt &c_denominator){coordinate_available=true;x=cx; y=cy; denominator=c_denominator;};
+		void getVoronoiVertex(LongInt &cx, LongInt &cy, LongInt &c_denominator) const {cx=x; cy=y; c_denominator=denominator;};
+		bool checkTriangleBirthTime(const LongInt& AlphaSquare) const{return tbt.compareBirthTime(AlphaSquare);};
+		void setBirthTime(const array<LongInt, 4>& p1)
+		{ 
+		  birthtime_available=true;
+		  tbt.setBirthParameter(x, y, denominator, p1[0], p1[1], p1[2]);
+		}
 		void addChilds(OrTri tri){childs.push_back(tri);};
 		void setFnext(int version, OrTri tri){fnext_[version]=tri;};
 	friend Trist;
@@ -99,12 +112,16 @@ class Trist {
 		void checkSymmerge(OrTri abc, OrTri abd);
 		void symMerge(OrTri abc, OrTri abd);
 		void fdetach(OrTri abc); // detach triangle abc with all its neighbours (undo fmerge)
+		bool voronoiVertexAvailable(OrTri tri) const{ return triangles[tri>>3].coordinate_available;};
+		bool birthTimeAvailable(OrTri tri) const{ return triangles[tri>>3].coordinate_available;};
+		void setbirthTime(OrTri tri, const array<LongInt, 4>& p1) { triangles[tri>>3].setBirthTime(p1);};
+		bool compareBirthTime(OrTri tri, const LongInt& alphaSquare) const{ return triangles[tri>>3].checkTriangleBirthTime(alphaSquare);};
 
-		void incidentTriangles(int ptIndex,int& noOrTri, OrTri* otList); // A suggested function: you may want this function to return all the OrTri
-		                                                                 // that are incident to this point
-		                                                                 // Ignore this if you don't feel a need
+		void setVoronoiVertex(OrTri tri, const LongInt& x, const LongInt& y, const LongInt& denominator){triangles[tri>>3].setVoronoiVertex(x, y, denominator);};
+		void getVoronoiVertex(OrTri tri, LongInt& x, LongInt& y, LongInt& denominator)const {triangles[tri>>3].getVoronoiVertex(x, y, denominator);};
+		
 		friend ostream& operator<< (ostream& out, Trist i );
-
+		
 };
 
 
