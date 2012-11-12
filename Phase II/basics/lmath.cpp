@@ -25,13 +25,14 @@ bool checkEdge( LongInt const& x1, LongInt const& y1, LongInt const& w1, LongInt
 	// distance between the two weighted points
 	LongInt distance = (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
 	LongInt w = w1 + w2;
-	LongInt alphaNew = alpha*alpha*2;
+	LongInt alphaNew = alpha*alpha*4;
+	LongInt D = distance-w1-w2;
 
-	if(alphaNew + w < 0){
-		return false;
+	if((D*D - w1*w2*4)*(w*2 - distance) < 0){
+		return true;
 	}
 	else{
-		return !((alphaNew*alphaNew + w*w + alphaNew*w*2) < distance);
+		return !((alphaNew*(w*2 - distance)) < (D*D - w1*w2*4));
 	}
 	// Condition when the balls just touch each other, also just touch voronoi edge
 	// LongInt birth = (d-w1-w2);
