@@ -22,11 +22,12 @@ Trist::Trist()
 int Trist::noTri(){
 	return Trist::triangles.size();
 }
-TriRecord::TriRecord(int p1, int p2, int p3){
+TriRecord::TriRecord(int p1, int p2, int p3):coordinate_available(false),birthtime_available(false){
     vi_[0] = p1;
 	vi_[1] = p2;
 	vi_[2] = p3;
 	std::fill_n(fnext_, 6, -1);
+	
 }
 int Trist::makeTri(int pIndex1,int pIndex2,int pIndex3){
 	TriRecord record(pIndex1, pIndex2, pIndex3);
@@ -373,3 +374,4 @@ void Trist::addChild(OrTri child, OrTri parent){
 	TriRecord& pRecord=triangles[parentIdx];
 	pRecord.addChilds(child);
 }
+

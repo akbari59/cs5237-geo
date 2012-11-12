@@ -12,7 +12,7 @@ public:
 	int noPt();                                         // return the number of points
 	void eraseAllPoints();                              // erase all points in this array
 	int removePoint (unsigned pIndex); // remove the point with index PIndex from psa;
-
+	void computeVoronoiVertex(int p1, int p2, int p3, LongInt& x, LongInt& y, LongInt& denominator) const;
 };
 
 #endif
