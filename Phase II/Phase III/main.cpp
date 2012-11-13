@@ -588,7 +588,7 @@ void delaunayComputation()
 	
 }
 
-bool checkEdgeWithAlphaAndAlphaSqaure(OrTri tri, const LongInt& alpha, const LongInt& alphaSquare){
+bool checkEdgeWithAlphaAndAlphaSqaure(OrTri tri,  const LongInt& alphaSquare){
 	        int side=DenaulayTriangulation.checkVoronoiSideRational(tri);
 
 			OrTri neigbhour=DenaulayTriangulation.trist.fnext(tri);
@@ -605,13 +605,13 @@ bool checkEdgeWithAlphaAndAlphaSqaure(OrTri tri, const LongInt& alpha, const Lon
 		        DenaulayTriangulation.trist.getVertexIdx(tri, pi1, pi2, pi3);
 				DenaulayTriangulation.psa.getPoint( pi1,x1,y1,w1,z);
 		        DenaulayTriangulation.psa.getPoint( pi2,x2,y2,w2,z);
-		        return checkEdge(x1, y1, w1, x2, y2, w2, alpha);
+		        return checkEdge(x1, y1, w1, x2, y2, w2, alphaSquare);
 			   
 			}else if(neigbhourside<1){
 				return DenaulayTriangulation.compareBirthTime(tri, alphaSquare);
+			}else{
+			    return false;
 			}
-			//from the way of the function is call, case side<1 has been handled in other part of the code. 
-			return false;
 }
 
 void alphaShapeComputation(int alphaV)
@@ -645,15 +645,15 @@ void alphaShapeComputation(int alphaV)
 			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
 		}else{
 			
-			if(checkEdgeWithAlphaAndAlphaSqaure(tri, alpha, alphaSquare)){
+			if(checkEdgeWithAlphaAndAlphaSqaure(tri,  alphaSquare)){
 			  drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(),0.7,0,0);
 			}
 			tri=DenaulayTriangulation.trist.enext(tri);
-			if(checkEdgeWithAlphaAndAlphaSqaure(tri, alpha, alphaSquare)){
+			if(checkEdgeWithAlphaAndAlphaSqaure(tri,  alphaSquare)){
 			  drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
 			}
 			tri=DenaulayTriangulation.trist.enext(tri);
-			if(checkEdgeWithAlphaAndAlphaSqaure(tri, alpha, alphaSquare)){
+			if(checkEdgeWithAlphaAndAlphaSqaure(tri,  alphaSquare)){
 			  drawALine(x3.doubleValue(),y3.doubleValue(), x1.doubleValue(),y1.doubleValue(),0.7,0,0);
 			}
 		
