@@ -688,8 +688,8 @@ void readFile(){
 		return;
 	}
 
-	if(file_loaded)
-	{
+	//if(file_loaded)
+	//{
 		//int result = MessageBox(HWND_DESKTOP,"Are you sure to reload data from file? ","Warning",MB_OKCANCEL);
 		//remove all points and triangles;
 
@@ -708,7 +708,7 @@ void readFile(){
 		}*/
 
 
-	}
+	//}
 
 	
 
