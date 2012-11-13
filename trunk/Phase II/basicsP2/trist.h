@@ -117,7 +117,7 @@ class Trist {
 		void setbirthTime(OrTri tri, const array<LongInt, 4>& p1) { triangles[tri>>3].setBirthTime(p1);};
 		bool compareBirthTime(OrTri tri, const LongInt& alphaSquare) const{ return triangles[tri>>3].checkTriangleBirthTime(alphaSquare);};
 
-		void setVoronoiVertex(OrTri tri, const LongInt& x, const LongInt& y, const LongInt& denominator){triangles[tri>>3].setVoronoiVertex(x, y, denominator);};
+		void setVoronoiVertex(OrTri tri, const LongInt& x, const LongInt& y, const LongInt& denominator);
 		void getVoronoiVertex(OrTri tri, LongInt& x, LongInt& y, LongInt& denominator)const {triangles[tri>>3].getVoronoiVertex(x, y, denominator);};
 		
 		friend ostream& operator<< (ostream& out, Trist i );
