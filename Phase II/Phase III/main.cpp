@@ -641,7 +641,7 @@ void alphaShapeComputation(int alphaV)
 		if(alphatri ){
 			drawATriangle(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.5,0.5,0.5);
 		    drawALine(x1.doubleValue(),y1.doubleValue(), x2.doubleValue(),y2.doubleValue(),0.7,0,0);
-			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
+			drawALine(x2.doubleValue(),y2.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
 			drawALine(x1.doubleValue(),y1.doubleValue(), x3.doubleValue(),y3.doubleValue(),0.7,0,0);
 		}else{
 			

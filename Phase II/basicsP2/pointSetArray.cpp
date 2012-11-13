@@ -50,10 +50,11 @@ void PointSetArray::computeVoronoiVertex(int p1Idx, int p2Idx, int p3Idx, LongIn
 	LongInt x1, y1, w1;
 	getPoint(p1Idx, x1, y1, w1, temp);
 	LongInt x2, y2, w2;
-	getPoint(p1Idx, x2, y2, w2, temp);
+	getPoint(p2Idx, x2, y2, w2, temp);
 	LongInt x3, y3, w3;
-	getPoint(p1Idx, x3, y3, w3, temp);
-	denominator = (x1*(y3-y2)+x2*(y1-y3)+x3*(y2-y1))*2;
+	getPoint(p3Idx, x3, y3, w3, temp);
+	LongInt half_denominator=x1*(y3-y2)+x2*(y1-y3)+x3*(y2-y1);
+	denominator = half_denominator*2;
 	LongInt x12 = x1*x1;
 	LongInt y12 = y1*y1;
 	LongInt x22 = x2*x2;
